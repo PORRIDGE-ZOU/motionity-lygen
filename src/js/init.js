@@ -70,6 +70,7 @@ var fontPicker;
 var fonts = [];
 var seeking = false;
 var setting = false;
+// if the hand-tool is pressed (or active?). Switcher: handTool() in functions.js
 var handtool = false;
 var canvasx = 0;
 var canvasy = 0;

@@ -320,6 +320,27 @@ $(document).ready(function () {
           }
         }, 1000);
       }
+      // Q Key (Toggle hand tool) -- George
+      if (e.QKey || e.which === 81) {
+        console.log('Q key pressed');
+        if (handtool) {
+          handtool = false;
+          $('#hand-tool').removeClass('hand-active');
+          $('#hand-tool')
+            .find('img')
+            .attr('src', 'assets/hand-tool.svg');
+          canvas.defaultCursor = 'default';
+          canvas.renderAll();
+        } else {
+          handtool = true;
+          $('#hand-tool').addClass('hand-active');
+          $('#hand-tool')
+            .find('img')
+            .attr('src', 'assets/hand-tool-active.svg');
+          canvas.defaultCursor = 'grab';
+          canvas.renderAll();
+        }
+      }
       // Redo
       if (e.which === 90 && (e.ctrlKey || e.metaKey) && e.shiftKey) {
         undoRedo(redo, undo, redoarr, undoarr);

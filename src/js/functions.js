@@ -1307,8 +1307,8 @@ async function playVideos(time) {
     if (
       object.get('id').indexOf('Video') >= 0 &&
       p_keyframes.find((x) => x.id == object.id).trimstart +
-        p_keyframes.find((x) => x.id == object.id).start <=
-        time &&
+      p_keyframes.find((x) => x.id == object.id).start <=
+      time &&
       p_keyframes.find((x) => x.id == object.id).end >= time
     ) {
       var tempfilters = object.filters;
@@ -1438,9 +1438,9 @@ function playAudio(time) {
             if (
               !flag &&
               p_keyframes.find((x) => x.id == object.id).start <=
-                currenttime &&
+              currenttime &&
               p_keyframes.find((x) => x.id == object.id).end >=
-                currenttime
+              currenttime
             ) {
               if (obj.get('src')) {
                 obj.get('src').currentTime =
@@ -1468,9 +1468,9 @@ function playAudio(time) {
               }
             } else if (
               p_keyframes.find((x) => x.id == object.id).start >=
-                currenttime ||
+              currenttime ||
               p_keyframes.find((x) => x.id == object.id).end <=
-                currenttime
+              currenttime
             ) {
               if (obj.get('src')) {
                 obj.get('src').pause();
@@ -1512,13 +1512,13 @@ async function recordAnimate(time) {
       if (
         currenttime <
         p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-          p_keyframes.find((x) => x.id == keyframe.id).start
+        p_keyframes.find((x) => x.id == keyframe.id).start
       ) {
         object.set('visible', false);
         inst.renderAll();
       } else if (
         currenttime >
-          p_keyframes.find((x) => x.id == keyframe.id).end ||
+        p_keyframes.find((x) => x.id == keyframe.id).end ||
         currenttime > duration
       ) {
         object.set('visible', false);
@@ -1530,7 +1530,7 @@ async function recordAnimate(time) {
       if (
         currenttime >=
         p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-          p_keyframes.find((x) => x.id == keyframe.id).start
+        p_keyframes.find((x) => x.id == keyframe.id).start
       ) {
         props.forEach(function (prop) {
           checkAnyKeyframe(keyframe.id, prop, inst);
@@ -1604,8 +1604,8 @@ async function recordAnimate(time) {
     if (
       keyframe.t >= time &&
       currenttime >=
-        p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-          p_keyframes.find((x) => x.id == keyframe.id).start
+      p_keyframes.find((x) => x.id == keyframe.id).trimstart +
+      p_keyframes.find((x) => x.id == keyframe.id).start
     ) {
       var delay = 0;
       var start = false;
@@ -1690,12 +1690,12 @@ async function recordAnimate(time) {
       if (
         currenttime <
         p_keyframes.find((x) => x.id == object.id).trimstart +
-          p_keyframes.find((x) => x.id == object.id).start
+        p_keyframes.find((x) => x.id == object.id).start
       ) {
         object2.set('visible', false);
       } else if (
         currenttime >
-          p_keyframes.find((x) => x.id == object.id).end ||
+        p_keyframes.find((x) => x.id == object.id).end ||
         currenttime > duration
       ) {
         object2.set('visible', false);
@@ -1705,7 +1705,7 @@ async function recordAnimate(time) {
       if (
         currenttime >=
         p_keyframes.find((x) => x.id == object.id).trimstart +
-          p_keyframes.find((x) => x.id == object.id).start
+        p_keyframes.find((x) => x.id == object.id).start
       ) {
         props.forEach(function (prop) {
           checkAnyKeyframe(object.id, prop, inst);
@@ -1762,13 +1762,13 @@ async function animate(play, time) {
         if (
           currenttime <
           p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-            p_keyframes.find((x) => x.id == keyframe.id).start
+          p_keyframes.find((x) => x.id == keyframe.id).start
         ) {
           object.set('visible', false);
           inst.renderAll();
         } else if (
           currenttime >
-            p_keyframes.find((x) => x.id == keyframe.id).end ||
+          p_keyframes.find((x) => x.id == keyframe.id).end ||
           currenttime > duration
         ) {
           object.set('visible', false);
@@ -1780,7 +1780,7 @@ async function animate(play, time) {
         if (
           currenttime >=
           p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-            p_keyframes.find((x) => x.id == keyframe.id).start
+          p_keyframes.find((x) => x.id == keyframe.id).start
         ) {
           props.forEach(function (prop) {
             checkAnyKeyframe(keyframe.id, prop, inst);
@@ -1810,7 +1810,7 @@ async function animate(play, time) {
                         for (var i = 0; i < tempgroup.length; i++) {
                             inst.add(tempgroup[i]);
                         }
-												*/
+                        */
           }
         }
         if (prop == 'left' && !recording) {
@@ -1839,8 +1839,8 @@ async function animate(play, time) {
       if (
         keyframe.t >= time &&
         currenttime >=
-          p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-            p_keyframes.find((x) => x.id == keyframe.id).start
+        p_keyframes.find((x) => x.id == keyframe.id).trimstart +
+        p_keyframes.find((x) => x.id == keyframe.id).start
       ) {
         var delay = 0;
         var start = false;
@@ -1880,12 +1880,12 @@ async function animate(play, time) {
             if (start && !paused) {
               if (
                 currenttime <
-                  p_keyframes.find((x) => x.id == keyframe.id)
-                    .trimstart +
-                    p_keyframes.find((x) => x.id == keyframe.id)
-                      .start ||
+                p_keyframes.find((x) => x.id == keyframe.id)
+                  .trimstart +
+                p_keyframes.find((x) => x.id == keyframe.id)
+                  .start ||
                 currenttime >
-                  p_keyframes.find((x) => x.id == keyframe.id).end ||
+                p_keyframes.find((x) => x.id == keyframe.id).end ||
                 currenttime > duration
               ) {
                 object.set('visible', false);
@@ -1990,12 +1990,12 @@ async function animate(play, time) {
         if (
           currenttime <
           p_keyframes.find((x) => x.id == object.id).trimstart +
-            p_keyframes.find((x) => x.id == object.id).start
+          p_keyframes.find((x) => x.id == object.id).start
         ) {
           object2.set('visible', false);
         } else if (
           currenttime >
-            p_keyframes.find((x) => x.id == object.id).end ||
+          p_keyframes.find((x) => x.id == object.id).end ||
           currenttime > duration
         ) {
           object2.set('visible', false);
@@ -2005,7 +2005,7 @@ async function animate(play, time) {
         if (
           currenttime >=
           p_keyframes.find((x) => x.id == object.id).trimstart +
-            p_keyframes.find((x) => x.id == object.id).start
+          p_keyframes.find((x) => x.id == object.id).start
         ) {
           props.forEach(function (prop) {
             checkAnyKeyframe(object.id, prop, inst);
@@ -2057,12 +2057,12 @@ async function animate(play, time) {
                   currenttime <
                   p_keyframes.find((x) => x.id == object.id)
                     .trimstart +
-                    p_keyframes.find((x) => x.id == object.id).start
+                  p_keyframes.find((x) => x.id == object.id).start
                 ) {
                   object2.set('visible', false);
                 } else if (
                   currenttime >
-                    p_keyframes.find((x) => x.id == object.id).end ||
+                  p_keyframes.find((x) => x.id == object.id).end ||
                   currenttime > duration
                 ) {
                   object2.set('visible', false);
@@ -2073,7 +2073,7 @@ async function animate(play, time) {
                   currenttime >=
                   p_keyframes.find((x) => x.id == object.id)
                     .trimstart +
-                    p_keyframes.find((x) => x.id == object.id).start
+                  p_keyframes.find((x) => x.id == object.id).start
                 ) {
                   props.forEach(function (prop) {
                     checkAnyKeyframe(object.id, prop, inst);
@@ -2128,12 +2128,12 @@ function renderKeyframe(object, prop, time) {
       .find('.shadowcolor')
       .prepend(
         "<div class='keyframe' data-time='" +
-          time +
-          "' data-object='" +
-          object.get('id') +
-          "' data-property='" +
-          prop +
-          "'></div>"
+        time +
+        "' data-object='" +
+        object.get('id') +
+        "' data-property='" +
+        prop +
+        "'></div>"
       );
     $('#' + object.get('id'))
       .find('.shadowcolor')
@@ -2155,12 +2155,12 @@ function renderKeyframe(object, prop, time) {
       .find('.' + prop)
       .prepend(
         "<div class='keyframe' data-time='" +
-          time +
-          "' data-object='" +
-          object.get('id') +
-          "' data-property='" +
-          prop +
-          "'></div>"
+        time +
+        "' data-object='" +
+        object.get('id') +
+        "' data-property='" +
+        prop +
+        "'></div>"
       );
     $('#' + object.get('id'))
       .find('.' + prop)
@@ -2277,10 +2277,10 @@ function newKeyframe(property, object, time, value, render) {
         updateKeyframe(
           $('#' + object.get('id')).find(
             ".keyframe[data-time='" +
-              time +
-              "'][data-property='" +
-              property +
-              "']"
+            time +
+            "'][data-property='" +
+            property +
+            "']"
           ),
           true
         );
@@ -2828,10 +2828,10 @@ function freezeProp(prop, object) {
 
   $(
     ".keyframe[data-object='" +
-      object.get('id') +
-      "'][data-property='" +
-      prop +
-      "']"
+    object.get('id') +
+    "'][data-property='" +
+    prop +
+    "']"
   ).remove();
 }
 
@@ -3003,18 +3003,18 @@ function renderLayer(object, animate = false) {
     timelinetime;
   $('#inner-timeline').prepend(
     "<div class='object-props' id='" +
-      object.get('id') +
-      "' style='width:" +
-      (p_keyframes.find((x) => x.id == object.get('id')).end -
-        p_keyframes.find((x) => x.id == object.get('id')).start) /
-        timelinetime +
-      "px'><div class='row main-row'><div class='row-el' style='background-color:" +
-      color +
-      "'><div class='trim-row' style='left:" +
-      leftoffset +
-      'px;width:' +
-      width +
-      "px'></div></div></div></div>"
+    object.get('id') +
+    "' style='width:" +
+    (p_keyframes.find((x) => x.id == object.get('id')).end -
+      p_keyframes.find((x) => x.id == object.get('id')).start) /
+    timelinetime +
+    "px'><div class='row main-row'><div class='row-el' style='background-color:" +
+    color +
+    "'><div class='trim-row' style='left:" +
+    leftoffset +
+    'px;width:' +
+    width +
+    "px'></div></div></div></div>"
   );
   if (object.get('assetType') == 'audio') {
     object.setControlsVisibility({
@@ -3025,34 +3025,34 @@ function renderLayer(object, animate = false) {
     });
     $('#layer-inner-list').prepend(
       "<div class='layer' data-object='" +
-        object.get('id') +
-        "'><div class='layer-name'><img class='droparrow' src='assets/drop-arrow.svg' ><img class='layer-icon' src=" +
-        src +
-        "><input class='layer-custom-name' value='" +
-        objects.find((x) => x.id == object.get('id')).label +
-        "' readonly></span><div class='layer-options'><img class='" +
-        freeze +
-        "' src='assets/" +
-        freeze +
-        ".svg' title='Toggle animation'></div></div><div class='properties'></div></div>"
+      object.get('id') +
+      "'><div class='layer-name'><img class='droparrow' src='assets/drop-arrow.svg' ><img class='layer-icon' src=" +
+      src +
+      "><input class='layer-custom-name' value='" +
+      objects.find((x) => x.id == object.get('id')).label +
+      "' readonly></span><div class='layer-options'><img class='" +
+      freeze +
+      "' src='assets/" +
+      freeze +
+      ".svg' title='Toggle animation'></div></div><div class='properties'></div></div>"
     );
   } else {
     $('#layer-inner-list').prepend(
       "<div class='layer' data-object='" +
-        object.get('id') +
-        "'><div class='layer-name'><img class='droparrow' src='assets/drop-arrow.svg' ><img class='layer-icon' src=" +
-        src +
-        "><input class='layer-custom-name' value='" +
-        objects.find((x) => x.id == object.get('id')).label +
-        "' readonly></span><div class='layer-options'><img class='lock " +
-        classlock +
-        "' src='assets/" +
-        srclock +
-        ".svg' title='Lock layer'><img class='" +
-        freeze +
-        "' src='assets/" +
-        freeze +
-        ".svg' title='Toggle animation'></div></div><div class='properties'></div></div>"
+      object.get('id') +
+      "'><div class='layer-name'><img class='droparrow' src='assets/drop-arrow.svg' ><img class='layer-icon' src=" +
+      src +
+      "><input class='layer-custom-name' value='" +
+      objects.find((x) => x.id == object.get('id')).label +
+      "' readonly></span><div class='layer-options'><img class='lock " +
+      classlock +
+      "' src='assets/" +
+      srclock +
+      ".svg' title='Lock layer'><img class='" +
+      freeze +
+      "' src='assets/" +
+      freeze +
+      ".svg' title='Toggle animation'></div></div><div class='properties'></div></div>"
     );
   }
   $(".layer[data-object='" + object.get('id') + "']")
@@ -3096,74 +3096,74 @@ function renderProp(prop, object) {
   }
   $('#' + object.get('id')).append(
     "<div class='row " +
-      prop +
-      " keyframe-row' data-object='" +
-      object.get('id') +
-      "'><div class='row-el'></div></div>"
+    prop +
+    " keyframe-row' data-object='" +
+    object.get('id') +
+    "'><div class='row-el'></div></div>"
   );
   if (prop == 'left') {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='position'><span class='property-keyframe' title='Create a new keyframe'></span>Position<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   } else if (prop == 'scaleX') {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='scale'><span class='property-keyframe' title='Create a new keyframe'></span>Scale<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   } else if (prop == 'strokeWidth') {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='stroke'><span class='property-keyframe' title='Create a new keyframe'></span>Stroke<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   } else if (prop == 'shadowcolor') {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='shadow'><span class='property-keyframe' title='Create a new keyframe'></span>Shadow<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   } else if (prop == 'charSpacing') {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='text'><span class='property-keyframe' title='Create a new keyframe'></span>Text<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   } else {
     $(".layer[data-object='" + object.get('id') + "']")
       .find('.properties')
       .append(
         "<div class='property-name' data-property='" +
-          prop +
-          "'><span class='property-keyframe' title='Create a new keyframe'></span>" +
-          prop +
-          "<img class='freeze-prop " +
-          classfreeze +
-          "' src='assets/" +
-          srcfreeze +
-          ".svg' title='Toggle animation'></div>"
+        prop +
+        "'><span class='property-keyframe' title='Create a new keyframe'></span>" +
+        prop +
+        "<img class='freeze-prop " +
+        classfreeze +
+        "' src='assets/" +
+        srcfreeze +
+        ".svg' title='Toggle animation'></div>"
       );
   }
   $('#' + object.get('id'))
@@ -4493,18 +4493,18 @@ function setDuration(length) {
   var seconds = (duration / 1000 - minutes * 60).toFixed(2);
   $('#total-time input').val(
     ('0' + minutes).slice(-2) +
-      ':' +
-      ('0' + Math.floor(seconds)).slice(-2) +
-      ':' +
-      ('0' + Math.floor((seconds % 1) * 100)).slice(-2)
+    ':' +
+    ('0' + Math.floor(seconds)).slice(-2) +
+    ':' +
+    ('0' + Math.floor((seconds % 1) * 100)).slice(-2)
   );
   $('.object-props').each(function () {
     $(this).css(
       'width',
       duration / timelinetime -
-        p_keyframes.find((x) => x.id == $(this).attr('id')).start /
-          timelinetime +
-        'px'
+      p_keyframes.find((x) => x.id == $(this).attr('id')).start /
+      timelinetime +
+      'px'
     );
     p_keyframes.find((x) => x.id == $(this).attr('id')).end =
       duration;
@@ -4519,10 +4519,10 @@ function setDuration(length) {
         .css(
           'width',
           duration / timelinetime -
-            p_keyframes.find((x) => x.id == $(this).attr('id'))
-              .trimstart /
-              timelinetime +
-            'px'
+          p_keyframes.find((x) => x.id == $(this).attr('id'))
+            .trimstart /
+          timelinetime +
+          'px'
         );
     }
   });
@@ -4543,19 +4543,19 @@ function renderTimeMarkers() {
   $('#time-numbers').html('');
   $('#time-numbers').append(
     "<div class='time-number' style='margin-left:" +
-      offset_left +
-      "px'>" +
-      timenumber +
-      's<span></span></div>'
+    offset_left +
+    "px'>" +
+    timenumber +
+    's<span></span></div>'
   );
   timenumber++;
   while (timenumber * 1000 <= duration) {
     $('#time-numbers').append(
       "<div class='time-number' style='margin-left:" +
-        renderoffset +
-        "px'>" +
-        timenumber +
-        's<span></span></div>'
+      renderoffset +
+      "px'>" +
+      timenumber +
+      's<span></span></div>'
     );
     if (timenumber % modulo != 0) {
       $('.time-number:last-child()').css('opacity', '0');
@@ -4570,7 +4570,7 @@ function setTimelineZoom(time) {
     $(this).offset({
       left:
         p_keyframes.find((x) => x.id == $(this).attr('id')).start /
-          time +
+        time +
         $('#inner-timeline').offset().left +
         offset_left,
     });
@@ -5320,10 +5320,10 @@ function renderTime() {
   var seconds = (currenttime / 1000 - minutes * 60).toFixed(2);
   $('#current-time input').val(
     ('0' + minutes).slice(-2) +
-      ':' +
-      ('0' + Math.floor(seconds)).slice(-2) +
-      ':' +
-      ('0' + Math.floor((seconds % 1) * 100)).slice(-2)
+    ':' +
+    ('0' + Math.floor(seconds)).slice(-2) +
+    ':' +
+    ('0' + Math.floor((seconds % 1) * 100)).slice(-2)
   );
 }
 
@@ -5373,7 +5373,7 @@ function dragSeekBar(e) {
     if (
       left > $('#timearea').offset().left + offset_left &&
       left - $('#timearea').offset().left <
-        duration / timelinetime + offset_left
+      duration / timelinetime + offset_left
     ) {
       drag.offset({ left: left });
     } else if (left < $('#timearea').offset().left + offset_left) {
@@ -5441,7 +5441,7 @@ function dragObjectProps(e) {
             hovertime / timelinetime -
             p_keyframes.find((x) => x.id == drag.attr('id'))
               .trimstart /
-              timelinetime +
+            timelinetime +
             offset2.left,
         });
         const leftval = parseFloat(
@@ -5462,7 +5462,7 @@ function dragObjectProps(e) {
     } else {
       if (
         hovertime +
-          p_keyframes.find((x) => x.id == drag.attr('id')).start <
+        p_keyframes.find((x) => x.id == drag.attr('id')).start <
         duration
       ) {
         drag2.css({
@@ -5470,7 +5470,7 @@ function dragObjectProps(e) {
             hovertime / timelinetime -
             p_keyframes.find((x) => x.id == drag.attr('id'))
               .trimstart /
-              timelinetime,
+            timelinetime,
         });
         save();
         p_keyframes.find((x) => x.id == drag.attr('id')).end =
@@ -5495,8 +5495,8 @@ function dragObjectProps(e) {
       if (
         left >
         $('#timearea').offset().left +
-          offset_left -
-          $('#timeline').scrollLeft()
+        offset_left -
+        $('#timeline').scrollLeft()
       ) {
         drag.offset({ left: left });
       } else if (
@@ -5634,12 +5634,12 @@ function resetHeight() {
 
 // Dragging timeline vertically
 function dragTimeline(e) {
-  const disableselect = (e) => {  
-    return false  
-  }  
-  document.onselectstart = disableselect  
+  const disableselect = (e) => {
+    return false
+  }
+  document.onselectstart = disableselect
   document.onmousedown = disableselect
-  
+
   oldtimelinepos = e.pageY;
   if (e.which == 3) {
     return false;
@@ -5968,4 +5968,7 @@ function handTool() {
 $(document).on('click', '#hand-tool', handTool);
 // Set defaults
 setDuration(10000);
+
+// CHECK DATABASE HERE. This will set some values to previously-saved ones, thus 
+// potentially preventing you to change some, such as the default canvas width and height.
 checkDB();

@@ -1,7 +1,9 @@
 // For debugging purposes
 db.config.debug = false;
 
-// Check if a project exists
+// Check if a project exists. If not, create a new one
+// This means you are autosaving every time you open the website
+// for testing, maybe we should disable this?
 function checkDB() {
   db.collection('projects')
     .get()

@@ -1,4 +1,4 @@
-// Update panel (when selecting / de-selecting objects)
+// Update the content of the properties panel (when selecting / de-selecting objects)
 function updatePanel(selection) {
   if (!selection) {
     $('#align').addClass('align-off');
@@ -7,10 +7,10 @@ function updatePanel(selection) {
     presets.forEach(function (preset) {
       $('#preset').append(
         "<option value='" +
-          preset.id +
-          "'>" +
-          preset.name +
-          '</option>'
+        preset.id +
+        "'>" +
+        preset.name +
+        '</option>'
       );
     });
     $('#preset').val(activepreset);
@@ -57,10 +57,10 @@ function updatePanel(selection) {
       if (object.id != canvas.getActiveObject().get('id')) {
         $('#masks').append(
           "<option value='" +
-            object.id +
-            "'>" +
-            object.id +
-            '</option>'
+          object.id +
+          "'>" +
+          object.id +
+          '</option>'
         );
       }
     });
@@ -223,10 +223,10 @@ function updatePanel(selection) {
         text_animation_list.forEach(function (preset) {
           $('#preset-picker').append(
             "<option value='" +
-              preset.name +
-              "'>" +
-              preset.label +
-              '</option>'
+            preset.name +
+            "'>" +
+            preset.label +
+            '</option>'
           );
         });
         $('#preset-picker').val(
@@ -284,7 +284,7 @@ function updatePanel(selection) {
                 }
             });
             $("#masks").niceSelect();
-						*/
+            */
     } else {
       $('#object-specific').append(selection_panel);
     }
@@ -497,8 +497,8 @@ function updatePanelValues() {
       if (
         $(
           "#masks option[value='" +
-            objects.find((x) => x.id == object.get('id')).mask +
-            "']"
+          objects.find((x) => x.id == object.get('id')).mask +
+          "']"
         ).length == 0
       ) {
         $('#masks').val('none');
@@ -611,14 +611,14 @@ function updateInputs(id) {
     colormode = 'fill';
     o_fill.setColor(
       'rgba(' +
-        o_fill.getColor().toRGBA()[0] +
-        ',' +
-        o_fill.getColor().toRGBA()[1] +
-        ',' +
-        o_fill.getColor().toRGBA()[2] +
-        ',' +
-        $('#object-color-fill-opacity input').val() / 100 +
-        ')'
+      o_fill.getColor().toRGBA()[0] +
+      ',' +
+      o_fill.getColor().toRGBA()[1] +
+      ',' +
+      o_fill.getColor().toRGBA()[2] +
+      ',' +
+      $('#object-color-fill-opacity input').val() / 100 +
+      ')'
     );
   }
   if (
@@ -635,14 +635,14 @@ function updateInputs(id) {
     colormode = 'stroke';
     o_fill.setColor(
       'rgba(' +
-        o_fill.getColor().toRGBA()[0] +
-        ',' +
-        o_fill.getColor().toRGBA()[1] +
-        ',' +
-        o_fill.getColor().toRGBA()[2] +
-        ',' +
-        $('#object-color-stroke-opacity input').val() / 100 +
-        ')'
+      o_fill.getColor().toRGBA()[0] +
+      ',' +
+      o_fill.getColor().toRGBA()[1] +
+      ',' +
+      o_fill.getColor().toRGBA()[2] +
+      ',' +
+      $('#object-color-stroke-opacity input').val() / 100 +
+      ')'
     );
   }
   if (
@@ -659,14 +659,14 @@ function updateInputs(id) {
     colormode = 'shadow';
     o_fill.setColor(
       'rgba(' +
-        o_fill.getColor().toRGBA()[0] +
-        ',' +
-        o_fill.getColor().toRGBA()[1] +
-        ',' +
-        o_fill.getColor().toRGBA()[2] +
-        ',' +
-        $('#object-color-shadow-opacity input').val() / 100 +
-        ')'
+      o_fill.getColor().toRGBA()[0] +
+      ',' +
+      o_fill.getColor().toRGBA()[1] +
+      ',' +
+      o_fill.getColor().toRGBA()[2] +
+      ',' +
+      $('#object-color-shadow-opacity input').val() / 100 +
+      ')'
     );
   }
 }
@@ -797,9 +797,9 @@ function updateObjectValues(type) {
       if (activepreset != 'custom') {
         if (
           presets.find((x) => x.id == activepreset).width !=
-            $('#canvas-w input').val() ||
+          $('#canvas-w input').val() ||
           presets.find((x) => x.id == activepreset).height !=
-            $('#canvas-h input').val()
+          $('#canvas-h input').val()
         ) {
           activepreset = 'custom';
           updatePanel();
@@ -819,14 +819,14 @@ function updateObjectValues(type) {
       colormode = 'back';
       o_fill.setColor(
         'rgba(' +
-          o_fill.getColor().toRGBA()[0] +
-          ',' +
-          o_fill.getColor().toRGBA()[1] +
-          ',' +
-          o_fill.getColor().toRGBA()[2] +
-          ',' +
-          $('#canvas-color-opacity input').val() / 100 +
-          ')'
+        o_fill.getColor().toRGBA()[0] +
+        ',' +
+        o_fill.getColor().toRGBA()[1] +
+        ',' +
+        o_fill.getColor().toRGBA()[2] +
+        ',' +
+        $('#canvas-color-opacity input').val() / 100 +
+        ')'
       );
     }
   }
@@ -904,15 +904,15 @@ function populateGrid(type) {
     shape_grid_items.forEach(function (item) {
       $('#shapes-row').append(
         "<div class='grid-item'><img onload='onLoadImage(this)' draggable=false src='" +
-          item +
-          "'></div>"
+        item +
+        "'></div>"
       );
     });
     emoji_items.forEach(function (item) {
       $('#emojis-row').append(
         "<div class='grid-emoji-item'><img  onload='onLoadImage(this)' draggable=false src='" +
-          item +
-          "'></div>"
+        item +
+        "'></div>"
       );
     });
   } else if (type == 'image-tool') {
@@ -920,12 +920,12 @@ function populateGrid(type) {
     image_categories.forEach(function (category) {
       $('#categories').append(
         "<div class='category' data-name='" +
-          category.name +
-          "'><img onload='onLoadImage(this)' src='" +
-          category.image +
-          "'>" +
-          category.name +
-          '</div>'
+        category.name +
+        "'><img onload='onLoadImage(this)' src='" +
+        category.image +
+        "'>" +
+        category.name +
+        '</div>'
       );
     });
   } else if (type == 'video-tool') {
@@ -933,12 +933,12 @@ function populateGrid(type) {
     video_categories.forEach(function (category) {
       $('#categories').append(
         "<div class='category' data-name='" +
-          category.name +
-          "'><img onload='onLoadImage(this)' src='" +
-          category.image +
-          "'>" +
-          category.name +
-          '</div>'
+        category.name +
+        "'><img onload='onLoadImage(this)' src='" +
+        category.image +
+        "'>" +
+        category.name +
+        '</div>'
       );
     });
   } else if (type == 'images-tab') {
@@ -952,14 +952,14 @@ function populateGrid(type) {
           flag = true;
           $('#images-grid').append(
             "<div class='image-grid-item' data-src='" +
-              item.src +
-              "' data-type='" +
-              item.type +
-              "' data-key='" +
-              item.key +
-              "'><img class='delete-media' draggable=false src='assets/more-options.svg'><img draggable=false onload='onLoadImage(this)' class='image-thing' src='" +
-              item.thumb +
-              "'</div>"
+            item.src +
+            "' data-type='" +
+            item.type +
+            "' data-key='" +
+            item.key +
+            "'><img class='delete-media' draggable=false src='assets/more-options.svg'><img draggable=false onload='onLoadImage(this)' class='image-thing' src='" +
+            item.thumb +
+            "'</div>"
           );
         }
       });
@@ -980,14 +980,14 @@ function populateGrid(type) {
           flag = true;
           $('#images-grid').append(
             "<div class='video-grid-item' data-src='" +
-              item.src +
-              "' data-type='" +
-              item.type +
-              "' data-key='" +
-              item.key +
-              "'><img class='delete-media' draggable=false src='assets/more-options.svg'><img draggable=false onload='onLoadImage(this)' class='image-thing' src='" +
-              item.thumb +
-              "'></div>"
+            item.src +
+            "' data-type='" +
+            item.type +
+            "' data-key='" +
+            item.key +
+            "'><img class='delete-media' draggable=false src='assets/more-options.svg'><img draggable=false onload='onLoadImage(this)' class='image-thing' src='" +
+            item.thumb +
+            "'></div>"
           );
         }
       });
@@ -1004,34 +1004,34 @@ function populateGrid(type) {
         flag = true;
         $('#audio-list').append(
           "<div class='audio-item audio-item-active' data-src='" +
-            item.src +
-            "'><div class='audio-preview'><img src='assets/play-button.svg'></div><img class='audio-thumb' src='" +
-            item.thumb +
-            "'><div class='audio-info'><div class='audio-info-title'>" +
-            item.name +
-            "</div><a href='" +
-            item.link +
-            "' target='_blank' class='audio-info-desc'>" +
-            item.desc +
-            "</a><div class='audio-info-duration'>" +
-            item.duration +
-            '</div></div></div></div>'
+          item.src +
+          "'><div class='audio-preview'><img src='assets/play-button.svg'></div><img class='audio-thumb' src='" +
+          item.thumb +
+          "'><div class='audio-info'><div class='audio-info-title'>" +
+          item.name +
+          "</div><a href='" +
+          item.link +
+          "' target='_blank' class='audio-info-desc'>" +
+          item.desc +
+          "</a><div class='audio-info-duration'>" +
+          item.duration +
+          '</div></div></div></div>'
         );
       } else {
         $('#audio-list').append(
           "<div class='audio-item' data-src='" +
-            item.src +
-            "'><div class='audio-preview'><img src='assets/play-button.svg'></div><img class='audio-thumb' src='" +
-            item.thumb +
-            "'><div class='audio-info'><div class='audio-info-title'>" +
-            item.name +
-            "</div><a href='" +
-            item.link +
-            "' target='_blank' class='audio-info-desc'>" +
-            item.desc +
-            "</a><div class='audio-info-duration'>" +
-            item.duration +
-            '</div></div></div></div>'
+          item.src +
+          "'><div class='audio-preview'><img src='assets/play-button.svg'></div><img class='audio-thumb' src='" +
+          item.thumb +
+          "'><div class='audio-info'><div class='audio-info-title'>" +
+          item.name +
+          "</div><a href='" +
+          item.link +
+          "' target='_blank' class='audio-info-desc'>" +
+          item.desc +
+          "</a><div class='audio-info-duration'>" +
+          item.duration +
+          '</div></div></div></div>'
         );
       }
     });
@@ -1043,10 +1043,10 @@ function populateGrid(type) {
     text_animation_list.forEach(function (text) {
       $('.animated-text-grid').append(
         "<div class='animated-text-item noselect' data-id='" +
-          text.name +
-          "'><img draggable='false' class='noselect' src='" +
-          text.src +
-          "'></div>"
+        text.name +
+        "'><img draggable='false' class='noselect' src='" +
+        text.src +
+        "'></div>"
       );
     });
     $('#shapes-cont').append("<p class='row-title'>Sans Serif</p>");
@@ -1058,12 +1058,12 @@ function populateGrid(type) {
       });
       $('#shapes-cont').append(
         "<div id='item-text' class='add-text noselect' data-font='" +
-          text.fontname +
-          "' style='font-family: " +
-          text.fontname +
-          ", sans-serif'>" +
-          text.name +
-          '</div>'
+        text.fontname +
+        "' style='font-family: " +
+        text.fontname +
+        ", sans-serif'>" +
+        text.name +
+        '</div>'
       );
     });
     $('#shapes-cont').append("<p class='row-title'>Serif</p>");
@@ -1075,12 +1075,12 @@ function populateGrid(type) {
       });
       $('#shapes-cont').append(
         "<div id='item-text' class='add-text noselect' data-font='" +
-          text.fontname +
-          "' style='font-family: " +
-          text.fontname +
-          "'>" +
-          text.name +
-          '</div>'
+        text.fontname +
+        "' style='font-family: " +
+        text.fontname +
+        "'>" +
+        text.name +
+        '</div>'
       );
     });
     $('#shapes-cont').append("<p class='row-title'>Monospace</p>");
@@ -1092,12 +1092,12 @@ function populateGrid(type) {
       });
       $('#shapes-cont').append(
         "<div id='item-text' class='add-text noselect' data-font='" +
-          text.fontname +
-          "' style='font-family: " +
-          text.fontname +
-          "'>" +
-          text.name +
-          '</div>'
+        text.fontname +
+        "' style='font-family: " +
+        text.fontname +
+        "'>" +
+        text.name +
+        '</div>'
       );
     });
     $('#shapes-cont').append("<p class='row-title'>Handwriting</p>");
@@ -1109,12 +1109,12 @@ function populateGrid(type) {
       });
       $('#shapes-cont').append(
         "<div id='item-text' class='add-text noselect' data-font='" +
-          text.fontname +
-          "' style='font-family: " +
-          text.fontname +
-          "'>" +
-          text.name +
-          '</div>'
+        text.fontname +
+        "' style='font-family: " +
+        text.fontname +
+        "'>" +
+        text.name +
+        '</div>'
       );
     });
     $('#shapes-cont').append("<p class='row-title'>Display</p>");
@@ -1126,12 +1126,12 @@ function populateGrid(type) {
       });
       $('#shapes-cont').append(
         "<div id='item-text' class='add-text noselect' data-font='" +
-          text.fontname +
-          "' style='font-family: " +
-          text.fontname +
-          "'>" +
-          text.name +
-          '</div>'
+        text.fontname +
+        "' style='font-family: " +
+        text.fontname +
+        "'>" +
+        text.name +
+        '</div>'
       );
     });
   }
@@ -1765,14 +1765,14 @@ function loadMoreMedia() {
           $.each(data.hits, function (i, hit) {
             $('#images-grid').append(
               "<div class='image-grid-item image-external-grid-item' data-src='" +
-                hit.webformatURL +
-                "'><a class='credit' href='" +
-                hit.pageURL +
-                "' target='_blank'>" +
-                hit.user +
-                "</a><img draggable=false onload='onLoadImage(this)' src='" +
-                hit.webformatURL +
-                "'</div>"
+              hit.webformatURL +
+              "'><a class='credit' href='" +
+              hit.pageURL +
+              "' target='_blank'>" +
+              hit.user +
+              "</a><img draggable=false onload='onLoadImage(this)' src='" +
+              hit.webformatURL +
+              "'</div>"
             );
           });
         } else {
@@ -1793,14 +1793,14 @@ function loadMoreMedia() {
             var video = hit.videos.medium.url;
             $('#images-grid').append(
               "<div class='image-grid-item video-external-grid-item' data-src='" +
-                video +
-                "'><a class='credit' href='" +
-                hit.pageURL +
-                "' target='_blank'>" +
-                hit.user +
-                "</a><div id='time-video'>" +
-                fancyTimeFormat(hit.duration) +
-                "</div><img draggable=false onload='onLoadImage(this)' src='assets/transparent.png'</div>"
+              video +
+              "'><a class='credit' href='" +
+              hit.pageURL +
+              "' target='_blank'>" +
+              hit.user +
+              "</a><div id='time-video'>" +
+              fancyTimeFormat(hit.duration) +
+              "</div><img draggable=false onload='onLoadImage(this)' src='assets/transparent.png'</div>"
             );
             createVideoThumbnail(video, 250, 0, true).then(function (
               data
@@ -1838,21 +1838,21 @@ function search() {
           $.each(data.hits, function (i, hit) {
             $('#images-grid').append(
               "<div class='image-grid-item image-external-grid-item' data-src='" +
-                hit.webformatURL +
-                "'><a class='credit' href='" +
-                hit.pageURL +
-                "' target='_blank'>" +
-                hit.user +
-                "</a><img draggable=false onload='onLoadImage(this)' src='" +
-                hit.webformatURL +
-                "'</div>"
+              hit.webformatURL +
+              "'><a class='credit' href='" +
+              hit.pageURL +
+              "' target='_blank'>" +
+              hit.user +
+              "</a><img draggable=false onload='onLoadImage(this)' src='" +
+              hit.webformatURL +
+              "'</div>"
             );
           });
         } else {
           $('#shapes-cont').html(
             "<div id='no-results'>Sorry, we couldn't find any results for &#x22;" +
-              encodeURIComponent(value) +
-              '&#x22;. Please try a different query.</div>'
+            encodeURIComponent(value) +
+            '&#x22;. Please try a different query.</div>'
           );
         }
       });
@@ -1876,14 +1876,14 @@ function search() {
             var video = hit.videos.medium.url;
             $('#images-grid').append(
               "<div class='image-grid-item video-external-grid-item' data-src='" +
-                video +
-                "'><a class='credit' href='" +
-                hit.pageURL +
-                "' target='_blank'>" +
-                hit.user +
-                "</a><div id='time-video'>" +
-                fancyTimeFormat(hit.duration) +
-                "</div><img draggable=false onload='onLoadImage(this)' src='assets/transparent.png'</div>"
+              video +
+              "'><a class='credit' href='" +
+              hit.pageURL +
+              "' target='_blank'>" +
+              hit.user +
+              "</a><div id='time-video'>" +
+              fancyTimeFormat(hit.duration) +
+              "</div><img draggable=false onload='onLoadImage(this)' src='assets/transparent.png'</div>"
             );
             //createVideoThumbnail(video, 250, 0, true).then(function(data){
             $(".image-grid-item[data-src='" + video + "']")
@@ -1891,16 +1891,16 @@ function search() {
               .attr(
                 'src',
                 'https://i.vimeocdn.com/video/' +
-                  hit.picture_id +
-                  '_640x360.jpg'
+                hit.picture_id +
+                '_640x360.jpg'
               );
             //});
           });
         } else {
           $('#shapes-cont').html(
             "<div id='no-results'>Sorry, we couldn't find any results for &#x22;" +
-              encodeURIComponent(value) +
-              '&#x22;. Please try a different query.</div>'
+            encodeURIComponent(value) +
+            '&#x22;. Please try a different query.</div>'
           );
         }
       });
@@ -1926,14 +1926,14 @@ function search() {
           if (item.indexOf('emoji') > -1) {
             $('.gallery-row').append(
               "<div class='grid-emoji-item'><img draggable=false src='" +
-                item +
-                "'></div>"
+              item +
+              "'></div>"
             );
           } else {
             $('.gallery-row').append(
               "<div class='grid-item'><img draggable=false src='" +
-                item +
-                "'></div>"
+              item +
+              "'></div>"
             );
           }
         }
@@ -1941,8 +1941,8 @@ function search() {
       if (!flag) {
         $('#shapes-cont').html(
           "<div id='no-results'>Sorry, we couldn't find any results for &#x22;" +
-            encodeURIComponent(value) +
-            '&#x22;. Please try a different query.</div>'
+          encodeURIComponent(value) +
+          '&#x22;. Please try a different query.</div>'
         );
       }
     }
@@ -1964,20 +1964,20 @@ function search() {
           });
           $('#shapes-cont').append(
             "<div id='item-text' class='add-text noselect' data-font='" +
-              font +
-              "' style='font-family: " +
-              font +
-              "'>" +
-              font +
-              '</div>'
+            font +
+            "' style='font-family: " +
+            font +
+            "'>" +
+            font +
+            '</div>'
           );
         }
       });
       if (!flag) {
         $('#shapes-cont').html(
           "<div id='no-results'>Sorry, we couldn't find any results for &#x22;" +
-            encodeURIComponent(value) +
-            '&#x22;. Please try a different query.</div>'
+          encodeURIComponent(value) +
+          '&#x22;. Please try a different query.</div>'
         );
       }
     }
@@ -2021,27 +2021,27 @@ function replaceAudioBackground() {
   var src = $(this).attr('data-src');
   newAudioLayer(src);
   /*
-	if ($(this).hasClass("audio-item-active")) {
-		background_audio = false;
-		background_key = false;
-		$(this).removeClass("audio-item-active");
-		save();
-	} else {
-		var src = $(this).attr("data-src");
-		if (background_audio != false) {
-			$("#audio-upload-button").removeClass("remove-audio");
-			$("#audio-upload-button").html('<img src="assets/upload.svg"> Upload audio');
-		}
-		db.collection("projects").doc({id: 1}).update({
-			audiosrc: src,
-		});
-		background_audio = new Audio(src);
-		background_audio.crossOrigin = "anonymous";
-		background_key = src;
-		save();
-		$(this).addClass("audio-item-active");
-	}		
-	*/
+  if ($(this).hasClass("audio-item-active")) {
+    background_audio = false;
+    background_key = false;
+    $(this).removeClass("audio-item-active");
+    save();
+  } else {
+    var src = $(this).attr("data-src");
+    if (background_audio != false) {
+      $("#audio-upload-button").removeClass("remove-audio");
+      $("#audio-upload-button").html('<img src="assets/upload.svg"> Upload audio');
+    }
+    db.collection("projects").doc({id: 1}).update({
+      audiosrc: src,
+    });
+    background_audio = new Audio(src);
+    background_audio.crossOrigin = "anonymous";
+    background_key = src;
+    save();
+    $(this).addClass("audio-item-active");
+  }		
+  */
 }
 $(document).on('click', '.audio-item', replaceAudioBackground);
 
@@ -2304,7 +2304,7 @@ async function getColor() {
     const selectedColor = await eyeDropper.open();
     colormode = 'chroma';
     o_fill.setColor(selectedColor.sRGBHex);
-  } catch (err) {}
+  } catch (err) { }
 }
 $(document).on('click', '.pcr-current-color', getColor);
 

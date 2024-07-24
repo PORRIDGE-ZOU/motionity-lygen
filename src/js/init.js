@@ -97,55 +97,38 @@ var eyeDropper;
 if (isChrome) {
   eyeDropper = new EyeDropper();
 }
+
+// canvas size presets
 var presets = [
-  {
-    name: 'Dribbble shot',
-    id: 'dribbble',
-    width: 1600,
-    height: 1200,
-  },
-  { name: 'Facebook post', id: 'facebook', width: 1280, height: 720 },
-  {
-    name: 'Facebook ad',
-    id: 'facebook-ad',
-    width: 1080,
-    height: 1080,
-  },
   { name: 'Youtube video', id: 'youtube', width: 1920, height: 1080 },
   {
-    name: 'Instagram video',
-    id: 'instagram-id',
-    width: 1080,
-    height: 1920,
+    name: 'Instagram video', id: 'instagram-id', width: 1080, height: 1920,
+  },
+  { name: 'Dribbble shot', id: 'dribbble', width: 1600, height: 1200, },
+  { name: 'Facebook post', id: 'facebook', width: 1280, height: 720 },
+  {
+    name: 'Facebook ad', id: 'facebook-ad', width: 1080, height: 1080,
   },
   {
-    name: 'Instagram stories',
-    id: 'instagram-stories',
-    width: 1080,
-    height: 1920,
+    name: 'Instagram stories', id: 'instagram-stories', width: 1080, height: 1920,
   },
-  { name: 'Twitter video', id: 'twitter', width: 1280, height: 720 },
+  {
+    name: 'Twitter video', id: 'twitter', width: 1280, height: 720
+  },
   { name: 'Snapchat ad', id: 'snapchat', width: 1080, height: 1920 },
   {
-    name: 'LinkedIn video',
-    id: 'linkedin',
-    width: 1920,
-    height: 1080,
+    name: 'LinkedIn video', id: 'linkedin', width: 1920, height: 1080,
   },
   {
-    name: 'Product Hunt thumbnail',
-    id: 'product-hunt',
-    width: 600,
-    height: 600,
+    name: 'Product Hunt thumbnail', id: 'product-hunt', width: 600, height: 600,
   },
   {
-    name: 'Pinterest ad',
-    id: 'pinterest',
-    width: 1080,
-    height: 1920,
+    name: 'Pinterest ad', id: 'pinterest', width: 1080, height: 1920,
   },
 ];
+// "Custom" preset will be added manually in ui.js
 var activepreset = 'custom';
+
 var uploaded_images = [];
 var uploaded_videos = [];
 var uploading = false;
@@ -172,8 +155,50 @@ $.ajax({
 });
 
 // Panel variants
-const canvas_panel =
-  '<div id="canvas-properties" class="panel-section"><p class="property-title">Canvas settings</p><table><tr><th class="name-col">Preset</th><th class="value-col"><select id="preset"></select></th></tr><tr><th class="name-col">Size</th><th class="value-col"><div id="canvas-w" class="property-input" data-label="W"><input type="number" min=1 value=1000></div><div id="canvas-h" class="property-input" data-label="H"><input type="number" value=1000 min=1></div></th></tr><tr><th class="name-col">Color</th><th class="value-col"><div id="canvas-color" class="object-color"><div id="color-side" class="color-picker"></div><input value="#FFFFFF" disabled="disabled"></div><div id="canvas-color-opacity" class="property-input" data-label="%"><input type="number" value=100></div></th></tr><tr><th class="name-col">Duration</th><th class="value-col" id="duration-cell"><div id="canvas-duration" class="property-input" data-label="s"><input type="number" value=15.00></div></th></tr></table></div>';
+const canvas_panel = `
+  <div id="canvas-properties" class="panel-section">
+    <p class="property-title">Canvas settings</p>
+    <table>
+      <tr>
+        <th class="name-col">Preset</th>
+        <th class="value-col">
+          <select id="preset"></select>
+        </th>
+      </tr>
+      <tr>
+        <th class="name-col">Size</th>
+        <th class="value-col">
+          <div id="canvas-w" class="property-input" data-label="W">
+            <input type="number" min="1" value="1000">
+          </div>
+          <div id="canvas-h" class="property-input" data-label="H">
+            <input type="number" value="1000" min="1">
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th class="name-col">Color</th>
+        <th class="value-col">
+          <div id="canvas-color" class="object-color">
+            <div id="color-side" class="color-picker"></div>
+            <input value="#FFFFFF" disabled="disabled">
+          </div>
+          <div id="canvas-color-opacity" class="property-input" data-label="%">
+            <input type="number" value="100">
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th class="name-col">Duration</th>
+        <th class="value-col" id="duration-cell">
+          <div id="canvas-duration" class="property-input" data-label="s">
+            <input type="number" value="15.00">
+          </div>
+        </th>
+      </tr>
+    </table>
+  </div>
+`;
 const object_panel =
   '<div id="layout-properties" class="panel-section"><p class="property-title">Layout</p><table><tr><th class="name-col">Position</th><th class="value-col"><div id="object-x" class="property-input" data-label="X"><input type="number" value=1000></div><div id="object-y" class="property-input" data-label="Y"><input value=1000 type="number"></div></th></tr><tr><th class="name-col">Size</th><th class="value-col"><div id="object-w" class="property-input" data-label="W"><input type="number" min=1 value=1000></div><div id="object-h" class="property-input" data-label="H"><input type="number" value=1000 min=1></div></th></tr><tr><th class="name-col">Rotation</th><th class="value-col" id="duration-cell"><div id="object-r" class="property-input" data-label="&#176;"><input type="number" min=0 max=360 value=0></div></th></tr></table></div>';
 const back_panel =
@@ -448,7 +473,7 @@ WebFont.load({
   google: {
     families: ['Syne'],
   },
-  active: () => {},
+  active: () => { },
 });
 
 var webglBackend;
@@ -784,9 +809,9 @@ fabric.Canvas.prototype.getItemById = function (name) {
   return object;
 };
 
-// Create the artboard
-var a_width = 600;
-var a_height = 500;
+// Create the artboard that limits the canvas's size
+var a_width = 1920;
+var a_height = 1080;
 var artboard = new fabric.Rect({
   left: canvas.get('width') / 2 - a_width / 2,
   top: canvas.get('height') / 2 - a_height / 2,
@@ -1007,7 +1032,7 @@ var t_slider = new RangeSlider(timelineslider, {
   onfinish: function (x) {
     setTimelineZoom(-1 * (x - 51));
   },
-  onstart: function (x) {},
+  onstart: function (x) { },
 });
 
 const selectbox = new SelectionArea({
@@ -1054,8 +1079,8 @@ selectbox
       return false;
     }
   })
-  .on('start', (evt) => {})
-  .on('move', (evt) => {})
+  .on('start', (evt) => { })
+  .on('move', (evt) => { })
   .on('stop', (evt) => {
     $('.keyframe-selected').removeClass('keyframe-selected');
     shiftkeys = [];
@@ -1073,3 +1098,32 @@ selectbox
       });
     }
   });
+
+
+// please tell me a joke! 
+// I'm sorry, I'm a computer program, not a stand-up comedian.
+// I can tell you a joke if you want.
+// Sure, tell me a joke.
+// Why did the computer go to the doctor?
+// Because it had a virus!
+// Haha!
+// I'm glad you liked it! I can tell you another one if you want.
+// for sure!
+// What do you call a computer that sings?
+// A-Dell!
+// AHAHA!
+// THank you copilot!
+// 你好！ Copilot！你今天怎么样？
+// 我很好，谢谢！你呢？
+// 我心情不好。
+// 为什么？
+// 因为我工作进展太慢了。
+// 没关系，我可以帮你。
+// 谢谢！
+// 不客气！
+// 你能给我讲个笑话吗？
+// 当然可以！
+// 好！
+// 为什么计算机去看医生？
+// 因为它中了病毒！
+// 哈哈哈！

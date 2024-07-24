@@ -45,6 +45,8 @@
         <input type="file" id="filepick" accept="image/*,video/*,audio/*" multiple>
         <input type="file" id="filepick2" accept="audio/*">
 				<input type="file" id="filepick3" accept="application/json">
+				<!-- FILEPICK4 - FOR LYRICS. --George -->				
+				<input type="file" id="filepick4" accept=".lrc" multiple>
 				<input type="file" id="import" style="display:none" accept='.json' aria-hidden="true" >
 				<div id="upload-popup">
 					<div id="upload-popup-container">
@@ -107,7 +109,10 @@
 				<div id="more-over">
 					<div id="upload-lottie">
 						<img src="assets/upload-grey.svg"> Upload Lottie
-					</div>						
+					</div>			
+					<div id="upload-lyrics">
+						<img src="assets/upload-grey.svg"> Upload LYRICS!
+					</div>					
 					<div id="clear-project">
 						<img src="assets/clear.svg"> Clear project
 					</div>
@@ -115,7 +120,22 @@
 				<div id="behind-browser"></div>
         <div id="browser">
             <div id="browser-container">
-							<div id="search-fixed"><p class="property-title">Objects</p><img id="collapse" src="assets/collapse.svg"><div id="browser-search"><input placeholder="Search..."><img src="assets/search.svg" id="search-icon"><img src="assets/delete.svg" id="delete-search"><div id="search-button">Go</div></div></div><div id="shapes-cont"><p class="row-title">Shapes</p><div class="gallery-row" id="shapes-row"></div><p class="row-title">Emojis</p><div class="gallery-row" id="emojis-row"></div></div>
+							<div id="search-fixed">
+								<p class="property-title">Objects</p>
+								<img id="collapse" src="assets/collapse.svg">
+								<div id="browser-search">
+									<input placeholder="Search...">
+									<img src="assets/search.svg" id="search-icon">
+									<img src="assets/delete.svg" id="delete-search">
+									<div id="search-button">Go</div>
+								</div>
+							</div>
+							<div id="shapes-cont">
+								<p class="row-title">Shapes</p>
+								<div class="gallery-row" id="shapes-row"></div>
+								<p class="row-title">Emojis</p>
+								<div class="gallery-row" id="emojis-row"></div>
+							</div>
             </div>
         </div>
         <div id="properties">

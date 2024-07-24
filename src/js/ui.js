@@ -1276,9 +1276,12 @@ function replaceObject(src, object) {
 
 // Drag object from the panel
 function dragObject(e) {
+  // Prevent right-click drag
   if (e.which == 3) {
     return false;
   }
+
+  // Clone the dragged element
   var drag = $(this).clone();
   drag.css({
     background: 'transparent',
@@ -1295,49 +1298,44 @@ function dragObject(e) {
     pointerEvents: 'none',
     opacity: 0,
   });
+
+  // Initial mouse positions
   var pageX = e.pageX;
   var pageY = e.pageY;
+  // distance to the initial element position?
   var offset = drag.offset();
   var offsetx = drag.offset().left + drag.width() / 2 - e.pageX;
   var offsety = drag.offset().top + drag.height() / 2 - e.pageY;
   var replacing = false;
-  draggingPanel = true;
   var move = false;
+  var draggingPanel = true;
   canvas.discardActiveObject();
   canvas.renderAll();
+
+  // Function to handle dragging
   function dragging(e) {
-    $('#bottom-area').addClass('noselect');
-    $('#toolbar').addClass('noselect');
-    $('#browser').addClass('noselect');
-    $('#properties').addClass('noselect');
-    $('#controls').addClass('noselect');
+    // Prevent text selection during drag
+    $('#bottom-area, #toolbar, #browser, #properties, #controls').addClass('noselect');
+
     move = true;
     var left = offset.left + (e.pageX - pageX);
     var top = offset.top + (e.pageY - pageY);
     drag.offset({ left: left, top: top });
 
-    if (
-      overCanvas &&
-      canvas.getActiveObject() &&
-      !replacing &&
-      canvas.getActiveObject().type == 'image' &&
-      (drag.hasClass('image-grid-item') ||
-        drag.hasClass('video-grid-item'))
-    ) {
+    // Check for replacement conditions
+    if (overCanvas
+      && canvas.getActiveObject()
+      && !replacing
+      && canvas.getActiveObject().type == 'image'
+      && (drag.hasClass('image-grid-item') || drag.hasClass('video-grid-item'))) {
       if (e.ctrlKey) {
         drag.css('visibility', 'hidden');
-        replaceObject(
-          drag.attr('data-src'),
-          canvas.getActiveObject()
-        );
+        replaceObject(drag.attr('data-src'), canvas.getActiveObject());
         replacing = true;
       } else {
         $('#replace-image').addClass('replace-active');
       }
-    } else if (
-      (replacing && !canvas.getActiveObject()) ||
-      (replacing && !e.ctrlKey)
-    ) {
+    } else if ((replacing && !canvas.getActiveObject()) || (replacing && !e.ctrlKey)) {
       drag.css('visibility', 'visible');
       replaceObject(oldsrc, oldobj);
       replacing = false;
@@ -1347,222 +1345,119 @@ function dragObject(e) {
       $('#replace-image').removeClass('replace-active');
     }
 
+    // Set opacity based on whether over canvas
     if (overCanvas) {
       drag.css({ opacity: 1 });
     } else {
       drag.css({ opacity: 0.5 });
     }
   }
+
+  // Function to handle release
   function released(e) {
-    $('#replace-image').removeClass('replace-active');
-    $('#bottom-area').removeClass('noselect');
-    $('#toolbar').removeClass('noselect');
-    $('#browser').removeClass('noselect');
-    $('#properties').removeClass('noselect');
-    $('#controls').removeClass('noselect');
+    // Reset noselect class
+    $('#replace-image, #bottom-area, #toolbar, #browser, #properties, #controls').removeClass('noselect');
     draggingPanel = false;
+
+    // Remove event listeners
     $('body').off('mousemove', dragging).off('mouseup', released);
-    canvasx = canvas.getPointer(e).x;
-    canvasy = canvas.getPointer(e).y;
+
+    // Get canvas coordinates
+    var canvasx = canvas.getPointer(e).x;
+    var canvasy = canvas.getPointer(e).y;
     var xpos = canvasx + offsetx - artboard.get('left');
     var ypos = canvasy + offsety - artboard.get('top');
+
     if (!overCanvas && move) {
       drag.remove();
       return false;
     }
+
     if (move && !replacing) {
+      // Handle different types of dragged objects
       if (drag.hasClass('grid-item')) {
-        newSVG(
-          drag.find('img').attr('src'),
-          xpos,
-          ypos,
-          drag.width(),
-          false
-        );
+        newSVG(drag.find('img').attr('src'), xpos, ypos, drag.width(), false);
       } else if (drag.hasClass('image-external-grid-item')) {
         $('#load-image').addClass('loading-active');
-        savePixabayImage(
-          drag.attr('data-src'),
-          xpos,
-          ypos,
-          drag.width()
-        );
+        savePixabayImage(drag.attr('data-src'), xpos, ypos, drag.width());
       } else if (drag.hasClass('video-external-grid-item')) {
-        savePixabayVideo(
-          drag.attr('data-src'),
-          drag.find('img').attr('src'),
-          xpos,
-          ypos
-        );
+        savePixabayVideo(drag.attr('data-src'), drag.find('img').attr('src'), xpos, ypos);
       } else if (drag.hasClass('image-grid-item')) {
         $('#load-image').addClass('loading-active');
-        loadImage(
-          drag.attr('data-src'),
-          xpos,
-          ypos,
-          drag.width(),
-          false
-        );
+        loadImage(drag.attr('data-src'), xpos, ypos, drag.width(), false);
       } else if (drag.hasClass('grid-emoji-item')) {
         $('#load-image').addClass('loading-active');
-        loadImage(
-          drag.find('img').attr('src'),
-          xpos,
-          ypos,
-          drag.width(),
-          false
-        );
+        loadImage(drag.find('img').attr('src'), xpos, ypos, drag.width(), false);
       } else if (drag.hasClass('add-text')) {
+        var text = 'Your text';
+        var size = 18;
+        var width = 400;
         if (drag.attr('id') == 'heading-text') {
-          newTextbox(
-            50,
-            700,
-            'Add a heading',
-            canvasx - artboard.get('left'),
-            canvasy - artboard.get('top'),
-            drag.width(),
-            false,
-            drag.attr('data-font')
-          );
+          text = 'Add a heading';
+          size = 50;
+          width = 700;
         } else if (drag.attr('id') == 'subheading-text') {
-          newTextbox(
-            22,
-            500,
-            'Add a subheading',
-            canvasx - artboard.get('left'),
-            canvasy - artboard.get('top'),
-            drag.width(),
-            false,
-            drag.attr('data-font')
-          );
+          text = 'Add a subheading';
+          size = 22;
+          width = 500;
         } else if (drag.attr('id') == 'body-text') {
-          newTextbox(
-            18,
-            400,
-            'Add body text',
-            canvasx - artboard.get('left'),
-            canvasy - artboard.get('top'),
-            drag.width(),
-            false,
-            drag.attr('data-font')
-          );
-        } else {
-          newTextbox(
-            18,
-            400,
-            'Your text',
-            canvasx - artboard.get('left'),
-            canvasy - artboard.get('top'),
-            drag.width(),
-            false,
-            drag.attr('data-font')
-          );
+          text = 'Add body text';
+          size = 18;
+          width = 400;
         }
+        newTextbox(size, width, text, xpos, ypos, drag.width(), false, drag.attr('data-font'));
       } else if (drag.hasClass('video-grid-item')) {
         $('#load-video').addClass('loading-active');
         loadVideo(drag.attr('data-src'), canvasx, canvasy);
       }
     } else if (!move && !replacing) {
+      // Center the object if not moved
+      var centerX = artboard.get('left') + artboard.get('width') / 2;
+      var centerY = artboard.get('top') + artboard.get('height') / 2;
       if (drag.hasClass('grid-item')) {
-        newSVG(
-          drag.find('img').attr('src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2,
-          100,
-          true
-        );
+        newSVG(drag.find('img').attr('src'), centerX, centerY, 100, true);
       } else if (drag.hasClass('image-external-grid-item')) {
-        savePixabayImage(
-          drag.attr('data-src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2,
-          150
-        );
+        savePixabayImage(drag.attr('data-src'), centerX, centerY, 150);
       } else if (drag.hasClass('video-external-grid-item')) {
-        savePixabayVideo(
-          drag.attr('data-src'),
-          drag.find('img').attr('src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2
-        );
+        savePixabayVideo(drag.attr('data-src'), drag.find('img').attr('src'), centerX, centerY);
       } else if (drag.hasClass('image-grid-item')) {
         $('#load-image').addClass('loading-active');
-        loadImage(
-          drag.attr('data-src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2,
-          150,
-          true
-        );
+        loadImage(drag.attr('data-src'), centerX, centerY, 150, true);
       } else if (drag.hasClass('grid-emoji-item')) {
         $('#load-image').addClass('loading-active');
-        loadImage(
-          drag.find('img').attr('src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2,
-          50,
-          true
-        );
+        loadImage(drag.find('img').attr('src'), centerX, centerY, 50, true);
       } else if (drag.hasClass('add-text')) {
+        var text = 'Your text';
+        var size = 18;
+        var width = 400;
         if (drag.attr('id') == 'heading-text') {
-          newTextbox(
-            50,
-            700,
-            'Add a heading',
-            artboard.get('left') + artboard.get('width') / 2,
-            artboard.get('top') + artboard.get('height') / 2,
-            drag.width(),
-            true,
-            drag.attr('data-font')
-          );
+          text = 'Add a heading';
+          size = 50;
+          width = 700;
         } else if (drag.attr('id') == 'subheading-text') {
-          newTextbox(
-            22,
-            500,
-            'Add a subheading',
-            artboard.get('left') + artboard.get('width') / 2,
-            artboard.get('top') + artboard.get('height') / 2,
-            drag.width(),
-            true,
-            drag.attr('data-font')
-          );
+          text = 'Add a subheading';
+          size = 22;
+          width = 500;
         } else if (drag.attr('id') == 'body-text') {
-          newTextbox(
-            18,
-            400,
-            'Add body text',
-            artboard.get('left') + artboard.get('width') / 2,
-            artboard.get('top') + artboard.get('height') / 2,
-            drag.width(),
-            true,
-            drag.attr('data-font')
-          );
-        } else {
-          newTextbox(
-            18,
-            400,
-            'Your text',
-            artboard.get('left') + artboard.get('width') / 2,
-            artboard.get('top') + artboard.get('height') / 2,
-            drag.width(),
-            true,
-            drag.attr('data-font')
-          );
+          text = 'Add body text';
+          size = 18;
+          width = 400;
         }
+        newTextbox(size, width, text, centerX, centerY, drag.width(), true, drag.attr('data-font'));
       } else if (drag.hasClass('video-grid-item')) {
         $('#load-video').addClass('loading-active');
-        loadVideo(
-          drag.attr('data-src'),
-          artboard.get('left') + artboard.get('width') / 2,
-          artboard.get('top') + artboard.get('height') / 2,
-          true
-        );
+        loadVideo(drag.attr('data-src'), centerX, centerY, true);
       }
     }
+
     drag.remove();
   }
+
+  // Attach event listeners
   $('body').on('mouseup', released).on('mousemove', dragging);
 }
+
+// Attach dragObject to specific elements
 $(document).on('mousedown', '.image-grid-item', dragObject);
 $(document).on('mousedown', '.video-grid-item', dragObject);
 $(document).on('mousedown', '.grid-item', dragObject);

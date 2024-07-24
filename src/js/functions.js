@@ -3078,6 +3078,7 @@ function renderLayer(object, animate = false) {
   }
 }
 
+
 // Render a property
 function renderProp(prop, object) {
   var classfreeze = '';
@@ -3171,39 +3172,24 @@ function renderProp(prop, object) {
     .toggle();
 }
 
+
 // Create a layer
 function newLayer(object) {
   layer_count++;
   var color;
+
+  // Determine the color based on the object's type and assetType
   if (object.get('type') == 'image') {
-    if (
-      object.get('assetType') &&
-      object.get('assetType') == 'video'
-    ) {
-      color = '#106CF6';
-    } else {
-      color = '#92F711';
-    }
+    color = object.get('assetType') == 'video' ? '#106CF6' : '#92F711';
   } else if (object.get('type') == 'textbox') {
     color = '#F7119B';
-  } else if (
-    object.get('type') == 'rect' ||
-    object.get('type') == 'group' ||
-    object.get('type') == 'circle' ||
-    object.get('type') == 'path'
-  ) {
-    color = '#9211F7';
-    if (object.get('assetType') == 'animatedText') {
-      color = '#F7119B';
-    } else if (object.get('assetType') == 'audio') {
-      color = '#11C0F7';
-    }
+  } else if (['rect', 'group', 'circle', 'path'].includes(object.get('type'))) {
+    color = object.get('assetType') == 'animatedText' ? '#F7119B' :
+      object.get('assetType') == 'audio' ? '#11C0F7' : '#9211F7';
   }
-  if (
-    (object.get('assetType') && object.get('assetType') == 'video') ||
-    object.get('type') == 'lottie' ||
-    object.get('assetType') == 'audio'
-  ) {
+
+  // If the object is a video, audio or lottie, add it to the timeline
+  if (['video', 'audio'].includes(object.get('assetType')) || object.get('type') == 'lottie') {
     objects.push({
       object: object,
       id: object.get('id'),
@@ -3215,25 +3201,18 @@ function newLayer(object) {
       start: 0,
       end: object.get('duration'),
     });
-    if (object.get('duration') < duration) {
-      p_keyframes.push({
-        start: currenttime,
-        end: object.get('duration') + currenttime,
-        trimstart: 0,
-        trimend: object.get('duration') + currenttime,
-        object: object,
-        id: object.get('id'),
-      });
-    } else {
-      p_keyframes.push({
-        start: currenttime,
-        end: duration - currenttime,
-        trimstart: 0,
-        trimend: duration - currenttime,
-        object: object,
-        id: object.get('id'),
-      });
-    }
+
+    // Handle keyframes for video/audio objects
+    const end = object.get('duration') < duration ? object.get('duration') + currenttime : duration - currenttime;
+    p_keyframes.push({
+      start: currenttime,
+      end: end,
+      trimstart: 0,
+      trimend: end,
+      object: object,
+      id: object.get('id'),
+    });
+
   } else {
     objects.push({
       object: object,
@@ -3244,120 +3223,65 @@ function newLayer(object) {
       locked: [],
       mask: 'none',
     });
-    if (object.get('notnew')) {
-      p_keyframes.push({
-        start: object.get('starttime'),
-        end: duration - object.get('starttime'),
-        trimstart: 0,
-        trimend: duration - currenttime,
-        object: object,
-        id: object.get('id'),
-      });
-    } else {
-      p_keyframes.push({
-        start: currenttime,
-        end: duration - currenttime,
-        trimstart: 0,
-        trimend: duration - currenttime,
-        object: object,
-        id: object.get('id'),
-      });
-    }
+
+    // Handle keyframes for non-video/audio objects
+    const start = object.get('notnew') ? object.get('starttime') : currenttime;
+    const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
+    p_keyframes.push({
+      start: start,
+      end: end,
+      trimstart: 0,
+      trimend: end,
+      object: object,
+      id: object.get('id'),
+    });
   }
+
+  // Render the layer
   renderLayer(object);
-  if (
-    !object.get('assetType') ||
-    object.get('assetType') != 'audio'
-  ) {
+
+  // Set properties for objects that are not audio
+  if (!object.get('assetType') || object.get('assetType') != 'audio') {
     props.forEach(function (prop) {
-      if (prop == 'lineHeight' || prop == 'charSpacing') {
-        if (object.get('type') == 'textbox') {
-          if (prop != 'lineHeight') {
-            renderProp(prop, object);
-          }
-          objects
-            .find((x) => x.id == object.id)
-            .defaults.push({ name: prop, value: object.get(prop) });
+      if (['lineHeight', 'charSpacing'].includes(prop) && object.get('type') == 'textbox') {
+        if (prop != 'lineHeight') {
+          renderProp(prop, object);
         }
-      } else if (
-        prop == 'shadow.opacity' ||
-        prop == 'shadow.blur' ||
-        prop == 'shadow.offsetX' ||
-        prop == 'shadow.offsetY' ||
-        prop == 'shadow.color'
-      ) {
+        objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.get(prop) });
+      } else if (prop.startsWith('shadow.')) {
         if (object.get('type') != 'group') {
           if (prop == 'shadow.color') {
             renderProp(prop, object);
-            objects
-              .find((x) => x.id == object.id)
-              .defaults.push({
-                name: prop,
-                value: object.shadow.color,
-              });
-          } else if (prop == 'shadow.blur') {
-            objects
-              .find((x) => x.id == object.id)
-              .defaults.push({
-                name: prop,
-                value: object.shadow.blur,
-              });
-          } else if (prop == 'shadow.offsetX') {
-            objects
-              .find((x) => x.id == object.id)
-              .defaults.push({
-                name: prop,
-                value: object.shadow.offsetX,
-              });
-          } else if (prop == 'shadow.offsetY') {
-            objects
-              .find((x) => x.id == object.id)
-              .defaults.push({
-                name: prop,
-                value: object.shadow.offsetY,
-              });
-          } else if (prop == 'shadow.opacity') {
-            objects
-              .find((x) => x.id == object.id)
-              .defaults.push({
-                name: prop,
-                value: object.shadow.opacity,
-              });
+            objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.shadow.color });
+          } else {
+            objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.shadow[prop.split('.')[1]] });
           }
         }
       } else {
-        if (
-          prop != 'top' &&
-          prop != 'scaleY' &&
-          prop != 'stroke' &&
-          prop != 'width' &&
-          prop != 'height'
-        ) {
+        if (!['top', 'scaleY', 'stroke', 'width', 'height'].includes(prop)) {
           renderProp(prop, object);
         }
-        objects
-          .find((x) => x.id == object.id)
-          .defaults.push({ name: prop, value: object.get(prop) });
+        objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.get(prop) });
       }
     });
   } else {
+    // Special handling for audio properties
     renderProp('volume', object);
-    objects
-      .find((x) => x.id == object.id)
-      .defaults.push({ name: 'volume', value: 0 });
+    objects.find((x) => x.id == object.id).defaults.push({ name: 'volume', value: 0 });
   }
+
+  // Update layer selection and visibility
   $('.layer-selected').removeClass('layer-selected');
-  $(".layer[data-object='" + object.get('id') + "']").addClass(
-    'layer-selected'
-  );
-  document
-    .getElementsByClassName('layer-selected')[0]
-    .scrollIntoView();
+  $(`.layer[data-object='${object.get('id')}']`).addClass('layer-selected');
+  document.getElementsByClassName('layer-selected')[0].scrollIntoView();
+
+  // Initialize animations and save the state
   objects.find((x) => x.id == object.id).animate = [];
   animate(false, currenttime);
   save();
   checkFilter();
 }
+
 
 // Add a (complex) SVG shape to the canvas
 function newSVG(svg, x, y, width, center) {
@@ -4041,7 +3965,8 @@ function audioUpload() {
   if (files) {
     if (files.length == 1) {
       if (files[0]['type'].split('/')[0] === 'audio') {
-        if (files[0].size / 1024 / 1024 <= 10) {
+        // MB size check. Default was 10. I changed it to 20. --George
+        if (files[0].size / 1024 / 1024 <= 20) {
           $('#audio-upload-button').html('Uploading...');
           $('#audio-upload-button').addClass('uploading');
           saveAudio(files[0]);
@@ -4392,6 +4317,7 @@ function newTextbox(
     mb: false,
   });
   canvas.add(newtext);
+  // add this text element as a layer
   newLayer(newtext);
   canvas.setActiveObject(newtext);
   canvas.bringToFront(newtext);
@@ -5970,5 +5896,5 @@ $(document).on('click', '#hand-tool', handTool);
 setDuration(10000);
 
 // CHECK DATABASE HERE. This will set some values to previously-saved ones, thus 
-// potentially preventing you to change some, such as the default canvas width and height.
+// potentially preventing you to change some, such as the default canvas width and height
 checkDB();

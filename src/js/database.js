@@ -460,6 +460,7 @@ async function savePixabayImage(url, xpos, ypos, width) {
 }
 
 async function saveAudio(url) {
+  console.log("Save Audio is called!");
   var reader = new FileReader();
   reader.readAsDataURL(url);
   reader.onloadend = function () {
@@ -471,7 +472,20 @@ async function saveAudio(url) {
       type: 'audio',
       hidden: true,
     });
-    newAudioLayer(reader.result);
+    let audio = new Audio(reader.result);
+    audio.addEventListener('loadeddata', () => {
+      // alert name of the file
+      $('#audio-upload-button').html(url.name);
+      let durationWhole = Math.ceil(audio.duration);
+      setDuration(durationWhole * 1000);
+      // set the value of $('#canvas-duration input') to durationWhole
+      $('#canvas-duration input').val(durationWhole);
+      canvas.renderAll();
+      newAudioLayer(reader.result);
+      // $('#audio-upload-button').html('Uploaded!');
+      $('#audio-upload-button').removeClass('uploading');
+    }
+    )
   };
 }
 
@@ -660,3 +674,56 @@ function clearProject() {
   hideMore();
 }
 $(document).on('click', '#clear-project', clearProject);
+
+
+class LyricsLine {
+  text = "DEFAULT LINE (Something is wrong)";
+  timeString = "00:00.00";
+  timeInSeconds = 0;
+  constructor(text, timeString) {
+    this.text = text;
+    this.timeString = timeString;
+    this.timeInSeconds = this.convertTimeToSeconds(timeString);
+  }
+  getText() {
+    return this.text;
+  }
+  getTime() {
+    return this.time;
+  }
+  convertTimeToSeconds(timeString) {
+    var minutes = parseInt(timeString.split(":")[0]);
+    var seconds = parseInt(timeString.split(":")[1].split(".")[0]);
+    var milliseconds = parseInt(timeString.split(":")[1].split(".")[1]);
+    return minutes * 60 + seconds + milliseconds / 100;
+  }
+}
+
+
+function uploadLyrics() {
+  $("#filepick4").click();
+}
+$(document).on('click', '#upload-lyrics', uploadLyrics);
+function lyricsParse(e) {
+  alert("Lyrics are uploaded!");
+  // alert file name
+  var file = e.target.files[0];
+  var reader = new FileReader();
+  reader.readAsText(file);
+  reader.onload = function (e) {
+    // alert file name
+    alert(reader.result);
+    var lyrics = reader.result;
+    var lyricsArray = lyrics.split('\n');
+    var lyricsObjects = [];
+    lyricsArray.forEach(function (line) {
+      var time = line.split("]")[0].split("[")[1];
+      // text should start from the second character, because the first one is space
+      var text = line.split("]")[1].substring(1);
+      var lyrics = new LyricsLine(text, time);
+      lyricsObjects.push(lyrics);
+    });
+    console.log(lyricsObjects);
+  };
+}
+$(document).on('change', '#filepick4', lyricsParse);

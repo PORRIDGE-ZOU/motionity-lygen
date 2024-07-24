@@ -3227,6 +3227,9 @@ function newLayer(object) {
     // Handle keyframes for non-video/audio objects
     const start = object.get('notnew') ? object.get('starttime') : currenttime;
     const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
+
+    console.log("[newLayer]" + start + " " + end);
+
     p_keyframes.push({
       start: start,
       end: end,

@@ -1,3 +1,11 @@
+Found Problems and TODOs:
+
+- [ ] Deleting an object can sometimes cause problems
+- [ ] Scaling logic is incorrect (fix, not implemented)
+- [ ] Cannot add animation presets to an existing text
+- [ ] No camera controller
+- [ ] No group alignment
+
 # Motionity
 
 ![Preview](preview.gif)<br><br>
@@ -29,4 +37,3 @@ Made by [Alyssa X](https://twitter.com/alyssaxuu)
 #
 
 Feel free to reach out to me through email at hi@alyssax.com or [on Twitter](https://twitter.com/alyssaxuu) if you have any questions or feedback! Hope you find this useful 💜
- 

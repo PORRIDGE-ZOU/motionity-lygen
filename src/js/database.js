@@ -688,8 +688,8 @@ class LyricsLine {
   getText() {
     return this.text;
   }
-  getTime() {
-    return this.time;
+  getTimeInSeconds() {
+    return this.timeInSeconds;
   }
   convertTimeToSeconds(timeString) {
     var minutes = parseInt(timeString.split(":")[0]);
@@ -698,6 +698,198 @@ class LyricsLine {
     return minutes * 60 + seconds + milliseconds / 100;
   }
 }
+
+
+function newTextboxWithTime(
+  fontsize,
+  fontweight,
+  text,
+  x,
+  y,
+  // width is not used? --GEORGE
+  width,
+  center,
+  font,
+  starttime,
+  duration
+) {
+  var newtext = new fabric.Textbox(text, {
+    left: x,
+    top: y,
+    originX: 'center',
+    originY: 'center',
+    fontFamily: 'Inter',
+    fill: '#000',
+    fontSize: fontsize,
+    fontWeight: fontweight,
+    textAlign: 'center',
+    cursorWidth: 1,
+    stroke: '#000',
+    strokeWidth: 0,
+    cursorDuration: 1,
+    paintFirst: 'stroke',
+    objectCaching: false,
+    absolutePositioned: true,
+    strokeUniform: true,
+    inGroup: false,
+    cursorDelay: 250,
+    strokeDashArray: false,
+    width: calculateTextWidth(
+      text,
+      fontweight + ' ' + fontsize + 'px Inter'
+    ),
+    id: 'Text' + layer_count,
+    shadow: {
+      color: '#000',
+      offsetX: 0,
+      offsetY: 0,
+      blur: 0,
+      opacity: 0,
+    },
+  });
+  newtext.setControlsVisibility({
+    mt: false,
+    mb: false,
+  });
+  canvas.add(newtext);
+  console.log("[newTextboxWithTime] starttime: " + starttime + " duration: " + duration + " text: " + text);
+
+  // add this text element as a layer
+  function newLayerForHere(object) {
+    layer_count++;
+    var color;
+
+    // Determine the color based on the object's type and assetType
+    if (object.get('type') == 'image') {
+      color = object.get('assetType') == 'video' ? '#106CF6' : '#92F711';
+    } else if (object.get('type') == 'textbox') {
+      color = '#F7119B';
+    } else if (['rect', 'group', 'circle', 'path'].includes(object.get('type'))) {
+      color = object.get('assetType') == 'animatedText' ? '#F7119B' :
+        object.get('assetType') == 'audio' ? '#11C0F7' : '#9211F7';
+    }
+
+    // If the object is a video, audio or lottie, add it to the timeline
+    if (['video', 'audio'].includes(object.get('assetType')) || object.get('type') == 'lottie') {
+      objects.push({
+        object: object,
+        id: object.get('id'),
+        label: object.get('id'),
+        color: color,
+        defaults: [],
+        locked: [],
+        mask: 'none',
+        start: 0,
+        end: object.get('duration'),
+      });
+
+      // Handle keyframes for video/audio objects
+      const end = object.get('duration') < duration ? object.get('duration') + currenttime : duration - currenttime;
+      p_keyframes.push({
+        start: currenttime,
+        end: end,
+        trimstart: 0,
+        trimend: end,
+        object: object,
+        id: object.get('id'),
+      });
+
+    } else {
+      objects.push({
+        object: object,
+        id: object.get('id'),
+        label: object.get('id'),
+        color: color,
+        defaults: [],
+        locked: [],
+        mask: 'none',
+      });
+
+      // THIS IS HANDLED BY FUNCTION PARAMETERS. --GEORGE
+      const start = starttime;
+      const end = duration;
+      p_keyframes.push({
+        start: start,
+        end: end,
+        trimstart: 0,
+        trimend: end,
+        object: object,
+        id: object.get('id'),
+      });
+    }
+
+    // Render the layer
+    renderLayer(object);
+
+    // Set properties for objects that are not audio
+    if (!object.get('assetType') || object.get('assetType') != 'audio') {
+      props.forEach(function (prop) {
+        if (['lineHeight', 'charSpacing'].includes(prop) && object.get('type') == 'textbox') {
+          if (prop != 'lineHeight') {
+            renderProp(prop, object);
+          }
+          objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.get(prop) });
+        } else if (prop.startsWith('shadow.')) {
+          if (object.get('type') != 'group') {
+            if (prop == 'shadow.color') {
+              renderProp(prop, object);
+              objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.shadow.color });
+            } else {
+              objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.shadow[prop.split('.')[1]] });
+            }
+          }
+        } else {
+          if (!['top', 'scaleY', 'stroke', 'width', 'height'].includes(prop)) {
+            renderProp(prop, object);
+          }
+          objects.find((x) => x.id == object.id).defaults.push({ name: prop, value: object.get(prop) });
+        }
+      });
+    } else {
+      // Special handling for audio properties
+      renderProp('volume', object);
+      objects.find((x) => x.id == object.id).defaults.push({ name: 'volume', value: 0 });
+    }
+
+    // Update layer selection and visibility
+    $('.layer-selected').removeClass('layer-selected');
+    $(`.layer[data-object='${object.get('id')}']`).addClass('layer-selected');
+    document.getElementsByClassName('layer-selected')[0].scrollIntoView();
+
+    // Initialize animations and save the state
+    objects.find((x) => x.id == object.id).animate = [];
+    animate(false, currenttime);
+    save();
+    checkFilter();
+  }
+  // newLayerForHere(newtext);
+  newtext.set('notnew', true);
+  newtext.set('starttime', starttime);
+  newLayer(newtext);
+
+
+  canvas.setActiveObject(newtext);
+  canvas.bringToFront(newtext);
+  // newtext.enterEditing();
+  // newtext.selectAll();
+  canvas.renderAll();
+  if (center) {
+    newtext.set(
+      'left',
+      artboard.get('left') + artboard.get('width') / 2
+    );
+    newtext.set(
+      'top',
+      artboard.get('top') + artboard.get('height') / 2
+    );
+    canvas.renderAll();
+  }
+  canvas.getActiveObject().set('fontFamily', font);
+  canvas.renderAll();
+
+}
+
+
 
 
 function uploadLyrics() {
@@ -724,6 +916,42 @@ function lyricsParse(e) {
       lyricsObjects.push(lyrics);
     });
     console.log(lyricsObjects);
+
+    lyricsObjects.forEach(function (line, index) {
+      // duration should be the next index's time - this time
+      var duration = 0;
+      duration = lyricsObjects[index + 1] ?
+        (lyricsObjects[index + 1].timeInSeconds - line.timeInSeconds) * 1000 :
+        5000; // HOW TO SET DEFAULT? --GEORGE
+      var centerX = artboard.get('left') + artboard.get('width') / 2;
+      var centerY = artboard.get('top') + artboard.get('height') / 2;
+      newTextboxWithTime(
+        30,
+        700,
+        line.getText(),
+        960,
+        540,
+        200,
+        false,
+        'Inter',
+        line.getTimeInSeconds() * 1000,
+        duration
+      );
+      // newTextbox(
+      //   30,
+      //   700,
+      //   line.getText(),
+      //   centerX,
+      //   centerY,
+      //   200,
+      //   false,
+      //   'Inter',
+      //   line.getTimeInSeconds() * 1000,
+      //   duration
+      // );
+      canvas.renderAll();
+    }
+    );
   };
 }
 $(document).on('change', '#filepick4', lyricsParse);

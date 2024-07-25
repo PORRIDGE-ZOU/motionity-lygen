@@ -695,6 +695,8 @@ class LyricsLine {
     var minutes = parseInt(timeString.split(":")[0]);
     var seconds = parseInt(timeString.split(":")[1].split(".")[0]);
     var milliseconds = parseInt(timeString.split(":")[1].split(".")[1]);
+    var result = minutes * 60 + seconds + milliseconds / 100;
+    console.log("conver time to seconds: " + result);
     return minutes * 60 + seconds + milliseconds / 100;
   }
 }
@@ -897,14 +899,13 @@ function uploadLyrics() {
 }
 $(document).on('click', '#upload-lyrics', uploadLyrics);
 function lyricsParse(e) {
-  alert("Lyrics are uploaded!");
   // alert file name
   var file = e.target.files[0];
   var reader = new FileReader();
   reader.readAsText(file);
   reader.onload = function (e) {
     // alert file name
-    alert(reader.result);
+    console.log(reader.result);
     var lyrics = reader.result;
     var lyricsArray = lyrics.split('\n');
     var lyricsObjects = [];

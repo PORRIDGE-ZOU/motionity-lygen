@@ -106,6 +106,8 @@ $(document).ready(function () {
 
   // A selection has been updated in the canvas
   canvas.on('selection:updated', function (e) {
+    console.log('[events.js] Selection updated, triggering updatePanel');
+
     updatePanel(true);
     updatePanelValues();
     updateSelection(e);

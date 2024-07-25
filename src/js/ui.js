@@ -1454,6 +1454,7 @@ function dragObject(e) {
   }
 
   // Attach event listeners
+  // Note: this means that when you just click the object, released is triggered -- GEORGE
   $('body').on('mouseup', released).on('mousemove', dragging);
 }
 

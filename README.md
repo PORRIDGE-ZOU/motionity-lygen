@@ -1,5 +1,7 @@
 Found Problems and TODOs:
 
+- [ ] When the size is 2k and you add a new text to the default position,
+      the old text will be shifted to the "central" position of the ORIGINAL SIZE
 - [ ] Deleting an object can sometimes cause problems
 - [ ] Scaling logic is incorrect (fixed, not implemented)
 - [ ] Cannot add animation presets to an existing text

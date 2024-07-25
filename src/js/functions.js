@@ -2498,13 +2498,7 @@ function animateProp(prop, object) {
   // Prop counterparts
   if (prop == 'left') {
     objects.find((x) => x.id == object.get('id')).animate.push('top');
-    newKeyframe(
-      'left',
-      object,
-      currenttime,
-      object.get('left'),
-      true
-    );
+    newKeyframe('left', object, currenttime, object.get('left'), true);
     newKeyframe('top', object, currenttime, object.get('top'), true);
     objects
       .find((x) => x.id == object.get('id'))
@@ -2515,48 +2509,65 @@ function animateProp(prop, object) {
       .defaults.find((x) => x.name == 'top').value =
       object.get('top') - artboard.get('top');
   } else if (prop == 'scaleX') {
-    newKeyframe(
-      'scaleY',
-      object,
-      currenttime,
-      object.get('scaleY'),
-      true
-    );
-    newKeyframe(
-      'width',
-      object,
-      currenttime,
-      object.get('width'),
-      true
-    );
-    newKeyframe(
-      'height',
-      object,
-      currenttime,
-      object.get('height'),
-      true
-    );
-    objects
-      .find((x) => x.id == object.get('id'))
-      .animate.push('scaleY');
-    objects
-      .find((x) => x.id == object.get('id'))
-      .animate.push('width');
-    objects
-      .find((x) => x.id == object.get('id'))
-      .animate.push('height');
-    objects
-      .find((x) => x.id == object.get('id'))
-      .defaults.find((x) => x.name == 'height').value =
-      object.get('height');
-    objects
-      .find((x) => x.id == object.get('id'))
-      .defaults.find((x) => x.name == 'width').value =
-      object.get('width');
-    objects
-      .find((x) => x.id == object.get('id'))
-      .defaults.find((x) => x.name == 'scaleY').value =
-      object.get('scaleY');
+    // Fix for the scaling bug: move newKeyframe after objects.find -- GEORGE 
+    for (var property of ['scaleY', 'width', 'height', 'scaleX', 'top', 'left']) {
+      objects.find((x) => x.id == object.get('id')).animate.push(property);
+      newKeyframe(property, object, currenttime, object.get(property), true);
+      if (property == 'top' || property == 'left') {
+        objects
+          .find((x) => x.id == object.get('id'))
+          .defaults.find((x) => x.name == property).value =
+          object.get(property) - artboard.get(property);
+      }
+      else {
+        objects
+          .find((x) => x.id == object.get('id'))
+          .defaults.find((x) => x.name == property).value =
+          object.get(property);
+      }
+    }
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .animate.push('scaleY');
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .animate.push('width');
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .animate.push('height');
+    // newKeyframe(
+    //   'scaleY',
+    //   object,
+    //   currenttime,
+    //   object.get('scaleY'),
+    //   true
+    // );
+    // newKeyframe(
+    //   'width',
+    //   object,
+    //   currenttime,
+    //   object.get('width'),
+    //   true
+    // );
+    // newKeyframe(
+    //   'height',
+    //   object,
+    //   currenttime,
+    //   object.get('height'),
+    //   true
+    // );
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .defaults.find((x) => x.name == 'height').value =
+    //   object.get('height');
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .defaults.find((x) => x.name == 'width').value =
+    //   object.get('width');
+    // objects
+    //   .find((x) => x.id == object.get('id'))
+    //   .defaults.find((x) => x.name == 'scaleY').value =
+    //   object.get('scaleY');
   } else if (prop == 'strokeWidth') {
     newKeyframe(
       'stroke',
@@ -4322,7 +4333,9 @@ function newTextbox(
   canvas.add(newtext);
   // add this text element as a layer
   newLayer(newtext);
-  canvas.setActiveObject(newtext);
+  // Fix for text top and left not correctly being set to center: move 
+  // setactiveobject to the end of function. --GEORGE
+  // canvas.setActiveObject(newtext);
   canvas.bringToFront(newtext);
   newtext.enterEditing();
   newtext.selectAll();
@@ -4336,8 +4349,11 @@ function newTextbox(
       'top',
       artboard.get('top') + artboard.get('height') / 2
     );
+    console.log("[newTextbox] centering text");
     canvas.renderAll();
   }
+  // set active here!
+  canvas.setActiveObject(newtext);
   canvas.getActiveObject().set('fontFamily', font);
   canvas.renderAll();
 }

@@ -1205,16 +1205,13 @@ function setObjectValue(prop, object, value, inst) {
     }
   }
   // VERY CONFUSING TWO LINES. THIS IS TRIGGERING THE BUG. --GEORGE
-  // if (prop == 'left' && !recording) {
-  //   object.set(prop, value + artboard.get('left'));
-  // } else if (prop == 'top' && !recording) {
-  //   object.set(prop, value + artboard.get('top'));
-  // IMPORTANT: I CHANGED THEM TO THESE BELOW. --GEORGE
   if (prop == 'left' && !recording) {
-    object.set(prop, value);
+    object.set(prop, value + artboard.get('left'));
   } else if (prop == 'top' && !recording) {
-    object.set(prop, value);
-  } else if (prop == 'shadow.blur') {
+    object.set(prop, value + artboard.get('top'));
+  }
+  // lines below are fine. --GEORGE
+  else if (prop == 'shadow.blur') {
     object.shadow.blur = value;
   } else if (prop == 'shadow.color') {
     object.shadow.color = value;
@@ -1286,8 +1283,12 @@ function checkAnyKeyframe(id, prop, inst) {
     const value = objects
       .find((x) => x.id == id)
       .defaults.find((x) => x.name == prop).value;
-    // console.log("[checkAnyKeyframe] keyarr2 is 0, object: ", object, " prop: ", prop, " value: ", value);
-    setObjectValue(prop, object, value, inst);
+    console.log("[checkAnyKeyframe] keyarr2 is 0, object: ", object, " prop: ", prop, " value: ", value, "object prop value: ", object.get(prop));
+    // NOTE HERE - I have to just SKIP OVER left and top to work around this issue.--George
+    if (prop == 'left' || prop == 'top') {
+    } else {
+      setObjectValue(prop, object, value, inst);
+    }
   }
 }
 

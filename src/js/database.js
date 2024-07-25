@@ -713,7 +713,7 @@ function newTextboxWithTime(
   center,
   font,
   starttime,
-  duration
+  thisDuration
 ) {
   var newtext = new fabric.Textbox(text, {
     left: x,
@@ -754,8 +754,6 @@ function newTextboxWithTime(
     mb: false,
   });
   canvas.add(newtext);
-  newtext.set('notnew', true);
-  newtext.set('starttime', starttime);
 
   function newLayerForHere(object) {
     layer_count++;
@@ -809,10 +807,9 @@ function newTextboxWithTime(
 
       // Handle keyframes for non-video/audio objects
       const start = object.get('notnew') ? object.get('starttime') : currenttime;
-      // const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
-      const end = object.get('notnew') ? duration : duration - currenttime;
+      const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
 
-      console.log("[newLayer] start and end time: " + start + " " + end);
+      console.log("[newLayerForHere] start and end" + start + " " + end);
 
       p_keyframes.push({
         start: start,
@@ -827,9 +824,10 @@ function newTextboxWithTime(
     // Render the layer
     renderLayer(object);
 
-    // Set properties for objects that are not audio
+    // Set HTML properties for objects that are not audio
     if (!object.get('assetType') || object.get('assetType') != 'audio') {
       props.forEach(function (prop) {
+
         if (['lineHeight', 'charSpacing'].includes(prop) && object.get('type') == 'textbox') {
           if (prop != 'lineHeight') {
             renderProp(prop, object);
@@ -868,12 +866,8 @@ function newTextboxWithTime(
     save();
     checkFilter();
   }
-  // add this text element as a layer (a layer is a row in the timeline)
   newLayerForHere(newtext);
 
-  // Fix for text top and left not correctly being set to center: move 
-  // setactiveobject to the end of function. --GEORGE
-  // canvas.setActiveObject(newtext);
   canvas.bringToFront(newtext);
   newtext.enterEditing();
   newtext.selectAll();
@@ -887,10 +881,10 @@ function newTextboxWithTime(
       'top',
       artboard.get('top') + artboard.get('height') / 2
     );
-    console.log("[newTextboxWithTime] centering text");
+    console.log("[newTextbox] centering text (this is a correct centering.)");
     canvas.renderAll();
   }
-  // set active here!
+
   canvas.setActiveObject(newtext);
   canvas.getActiveObject().set('fontFamily', font);
   canvas.renderAll();

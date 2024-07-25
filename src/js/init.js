@@ -16,7 +16,9 @@ var currenttime = 0;
 var timelinetime = 5;
 const offset_left = 20;
 var duration = 30000;
+// keyframes seem to be the added keyframes by users
 var keyframes = [];
+// p_keyframes seem to be the default keyframes for any object
 var p_keyframes = [];
 var props = [
   'left',

@@ -1,6 +1,8 @@
 $(document).ready(function () {
   // An object is being moved in the canvas
   canvas.on('object:moving', function (e) {
+    console.log('[events.js] Object moving');
+
     e.target.hasControls = false;
     centerLines(e);
     if (cropping) {
@@ -80,6 +82,8 @@ $(document).ready(function () {
 
   // An object has been modified in the canvas
   canvas.on('object:modified', function (e) {
+    console.log('[events.js] Object modified');
+
     e.target.hasControls = true;
     if (!editinggroup && !cropping) {
       canvas.getActiveObject().lockMovementX = false;
@@ -119,6 +123,7 @@ $(document).ready(function () {
     shiftx = canvas.getActiveObject().get('left');
     shifty = canvas.getActiveObject().get('top');
     if (!editingpanel) {
+      console.log('[events.js] Selection created, triggering updatePanel');
       updatePanel(true);
     }
     updateSelection(e);
@@ -129,6 +134,7 @@ $(document).ready(function () {
   // A selection has been cleared in the canvas
   canvas.on('selection:cleared', function (e) {
     if (!editingpanel && !setting) {
+      console.log('[events.js] Selection cleared, triggering updatePanel');
       updatePanel(false);
     }
     $('.layer-selected').removeClass('layer-selected');

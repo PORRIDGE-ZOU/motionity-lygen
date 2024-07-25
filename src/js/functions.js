@@ -1204,10 +1204,16 @@ function setObjectValue(prop, object, value, inst) {
       }
     }
   }
+  // VERY CONFUSING TWO LINES. THIS IS TRIGGERING THE BUG. --GEORGE
+  // if (prop == 'left' && !recording) {
+  //   object.set(prop, value + artboard.get('left'));
+  // } else if (prop == 'top' && !recording) {
+  //   object.set(prop, value + artboard.get('top'));
+  // IMPORTANT: I CHANGED THEM TO THESE BELOW. --GEORGE
   if (prop == 'left' && !recording) {
-    object.set(prop, value + artboard.get('left'));
+    object.set(prop, value);
   } else if (prop == 'top' && !recording) {
-    object.set(prop, value + artboard.get('top'));
+    object.set(prop, value);
   } else if (prop == 'shadow.blur') {
     object.shadow.blur = value;
   } else if (prop == 'shadow.color') {
@@ -1280,6 +1286,7 @@ function checkAnyKeyframe(id, prop, inst) {
     const value = objects
       .find((x) => x.id == id)
       .defaults.find((x) => x.name == prop).value;
+    // console.log("[checkAnyKeyframe] keyarr2 is 0, object: ", object, " prop: ", prop, " value: ", value);
     setObjectValue(prop, object, value, inst);
   }
 }
@@ -1720,378 +1727,207 @@ async function recordAnimate(time) {
 }
 
 // Animate timeline (or seek to specific point in time)
+// IMPROVED BY CHATGPT -- GEORGE
 async function animate(play, time) {
   anime.speed = speed;
+
   if (!draggingPanel) {
-    var starttime = new Date();
-    var offset = time;
-    var inst = canvas;
-    keyframes.forEach(function (keyframe, index) {
-      // Find next keyframe in time from same object & property
+    const starttime = new Date();
+    const offset = time;
+    const inst = canvas;
+
+    keyframes.forEach((keyframe, index) => {
+      // Function to find the next keyframe in time from the same object & property
       function nextKeyframe(keyframe, index) {
-        var temparr = keyframes.slice();
-        temparr.sort(function (a, b) {
-          return a.t - b.t;
-        });
-        temparr.splice(
-          0,
-          temparr.findIndex((x) => x === keyframe) + 1
-        );
-        if (temparr.length == 0) {
-          return false;
-        } else {
-          for (var i = 0; i < temparr.length; i++) {
-            if (
-              temparr[i].id == keyframe.id &&
-              temparr[i].name == keyframe.name
-            ) {
-              return temparr[i];
-              break;
-            } else if (i == temparr.length - 1) {
-              return false;
-            }
+        const sortedKeyframes = keyframes.slice().sort((a, b) => a.t - b.t);
+        const remainingKeyframes = sortedKeyframes.slice(sortedKeyframes.findIndex(x => x === keyframe) + 1);
+
+        for (const kf of remainingKeyframes) {
+          if (kf.id === keyframe.id && kf.name === keyframe.name) {
+            return kf;
           }
         }
+
+        return false;
       }
-      // Regroup if needed (groups break to animate their children, then regroup after children have animated)
-      if (groups.find((x) => x.id == keyframe.id)) {
-        if (!canvas.getItemById(keyframe.id)) {
-          reGroup(keyframe.id);
-        }
+
+      // Regroup if needed
+      const group = groups.find(x => x.id === keyframe.id);
+      if (group) {
         const object = canvas.getItemById(keyframe.id);
-        if (
-          currenttime <
-          p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-          p_keyframes.find((x) => x.id == keyframe.id).start
-        ) {
-          object.set('visible', false);
-          inst.renderAll();
-        } else if (
-          currenttime >
-          p_keyframes.find((x) => x.id == keyframe.id).end ||
-          currenttime > duration
-        ) {
-          object.set('visible', false);
-          inst.renderAll();
-        } else {
-          object.set('visible', true);
-          inst.renderAll();
-        }
-        if (
-          currenttime >=
-          p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-          p_keyframes.find((x) => x.id == keyframe.id).start
-        ) {
-          props.forEach(function (prop) {
-            checkAnyKeyframe(keyframe.id, prop, inst);
-          });
+
+        // Set object visibility based on current time and keyframe properties
+        const pKeyframe = p_keyframes.find(x => x.id === keyframe.id);
+        const isVisible = currenttime >= pKeyframe.trimstart + pKeyframe.start &&
+          currenttime <= pKeyframe.end &&
+          currenttime <= duration;
+
+        object.set('visible', isVisible);
+        inst.renderAll();
+
+        if (isVisible) {
+          props.forEach(prop => checkAnyKeyframe(keyframe.id, prop, inst));
         }
       }
 
-      // Copy of setObjectValue function, seems to perform better inside the function
+      // Function to set the value of an object's property
       function setValue(prop, object, value, inst) {
-        if (object.get('assetType') == 'audio' && play) {
+        if (object.get('assetType') === 'audio' && play) {
           if (object.get('src')) {
             object.get('src').volume = value;
             object.set('volume', value);
           }
-          return false;
+          return;
         }
-        if (object.get('type') != 'group') {
+
+        if (object.get('type') !== 'group') {
           if (object.group) {
-            /*
-                        var group = object.group;
-                        tempgroup = group._objects;
-                        group._restoreObjectsState();
-                        canvas.setActiveObject(group);
-                        inst.remove(canvas.getActiveObject());
-                        canvas.discardActiveObject();
-                        inst.renderAll();
-                        for (var i = 0; i < tempgroup.length; i++) {
-                            inst.add(tempgroup[i]);
-                        }
-                        */
+            // Code for handling group properties (commented out for now)
           }
         }
-        if (prop == 'left' && !recording) {
+
+        // Set the property value
+        if (prop === 'left' && !recording) {
           object.set(prop, value + artboard.get('left'));
-        } else if (prop == 'top' && !recording) {
+        } else if (prop === 'top' && !recording) {
           object.set(prop, value + artboard.get('top'));
-        } else if (prop == 'shadow.blur') {
-          object.shadow.blur = value;
-        } else if (prop == 'shadow.color') {
-          object.shadow.color = value;
-        } else if (prop == 'shadow.offsetX') {
-          object.shadow.offsetX = value;
-        } else if (prop == 'shadow.offsetY') {
-          object.shadow.offsetY = value;
-        } else if (prop == 'shadow.blur') {
-          object.shadow.blur = value;
-        } else if (object.get('type') != 'group') {
-          object.set(prop, value);
-        } else if (prop != 'width') {
+        } else if (prop.startsWith('shadow.')) {
+          const shadowProp = prop.split('.')[1];
+          object.shadow[shadowProp] = value;
+        } else if (object.get('type') !== 'group' || prop !== 'width') {
           object.set(prop, value);
         }
+
         inst.renderAll();
       }
 
-      var object = canvas.getItemById(keyframe.id);
-      if (
-        keyframe.t >= time &&
-        currenttime >=
-        p_keyframes.find((x) => x.id == keyframe.id).trimstart +
-        p_keyframes.find((x) => x.id == keyframe.id).start
-      ) {
-        var delay = 0;
-        var start = false;
-        var lasttime, lastprop;
-        // Find last keyframe in time from same object & property
-        var lastkey = lastKeyframe(keyframe, index);
-        if (!lastkey) {
-          lasttime = 0;
-          lastprop = objects
-            .find((x) => x.id == keyframe.id)
-            .defaults.find((x) => x.name == keyframe.name).value;
-        } else {
-          lasttime = lastkey.t;
-          lastprop = lastkey.value;
-        }
-        if (lastkey && lastkey.t >= time && !play) {
-          return;
-        }
-        // Set delay for the animation if playing
-        if (play) {
-          if (lasttime > currenttime) {
-            delay = lasttime - time;
-          }
-        }
-        // Initiate the animation
-        var animation = {
-          value: lastprop,
-        };
-        var instance = anime({
+      const object = canvas.getItemById(keyframe.id);
+
+      // Handle keyframe animation
+      if (keyframe.t >= time && currenttime >= p_keyframes.find(x => x.id === keyframe.id).trimstart + p_keyframes.find(x => x.id === keyframe.id).start) {
+        const lastKeyframe = keyframes.slice(0, index).reverse().find(kf => kf.id === keyframe.id && kf.name === keyframe.name);
+        const lastTime = lastKeyframe ? lastKeyframe.t : 0;
+        const lastProp = lastKeyframe ? lastKeyframe.value : objects.find(x => x.id === keyframe.id).defaults.find(x => x.name === keyframe.name).value;
+
+        if (lastKeyframe && lastKeyframe.t >= time && !play) return;
+
+        const delay = play && lastTime > currenttime ? lastTime - time : 0;
+
+        const animation = { value: lastProp };
+        const instance = anime({
           targets: animation,
           delay: delay,
           value: keyframe.value,
-          duration: keyframe.t - lasttime,
+          duration: keyframe.t - lastTime,
           easing: keyframe.easing,
           autoplay: false,
-          update: function () {
+          update: () => {
             if (start && !paused) {
-              if (
-                currenttime <
-                p_keyframes.find((x) => x.id == keyframe.id)
-                  .trimstart +
-                p_keyframes.find((x) => x.id == keyframe.id)
-                  .start ||
-                currenttime >
-                p_keyframes.find((x) => x.id == keyframe.id).end ||
-                currenttime > duration
-              ) {
-                object.set('visible', false);
-                inst.renderAll();
-              } else {
-                setValue(
-                  keyframe.name,
-                  object,
-                  animation.value,
-                  inst
-                );
-                object.set('visible', true);
-                inst.renderAll();
-              }
+              const pKeyframe = p_keyframes.find(x => x.id === keyframe.id);
+              const isVisible = currenttime >= pKeyframe.trimstart + pKeyframe.start && currenttime <= pKeyframe.end && currenttime <= duration;
+
+              setValue(keyframe.name, object, animation.value, inst);
+              object.set('visible', isVisible);
+              inst.renderAll();
             } else if (start && paused) {
               anime.remove(animation);
             }
           },
-          changeBegin: function () {
-            start = true;
-          },
+          changeBegin: () => { start = true; },
         });
 
-        if (time - lasttime <= 0) {
-          instance.seek(0);
-        } else {
-          instance.seek(time - lasttime);
-        }
+        instance.seek(time - lastTime <= 0 ? 0 : time - lastTime);
 
-        if (play) {
-          instance.play();
-        } else if (
-          parseFloat(lasttime) <= parseFloat(time) &&
-          parseFloat(keyframe.t) >= parseFloat(time)
-        ) {
+        if (play) instance.play();
+        else if (parseFloat(lastTime) <= parseFloat(time) && parseFloat(keyframe.t) >= parseFloat(time)) {
           setValue(keyframe.name, object, animation.value, inst);
         }
-      } else if (
-        keyframe.t < time &&
-        !nextKeyframe(keyframe, index)
-      ) {
-        var prop = keyframe.name;
-        if (prop == 'left' && !recording) {
-          if (
-            object.get('left') - artboard.get('left') !=
-            keyframe.value
-          ) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else if (prop == 'top' && !recording) {
-          if (
-            object.get('top') - artboard.get('top') !=
-            keyframe.value
-          ) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else if (prop == 'shadow.blur') {
-          if (object.shadow.blur != keyframe.value) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else if (prop == 'shadow.color') {
-          if (object.shadow.color != keyframe.value) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else if (prop == 'shadow.offsetX') {
-          if (object.shadow.offsetX != keyframe.value) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else if (prop == 'shadow.offsetY') {
-          if (object.shadow.offsetY != keyframe.value) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
-        } else {
-          if (object.get(prop) != keyframe.value) {
-            setValue(keyframe.name, object, keyframe.value, inst);
-          }
+      } else if (keyframe.t < time && !nextKeyframe(keyframe, index)) {
+        const prop = keyframe.name;
+        const currentVal = prop.startsWith('shadow.') ? object.shadow[prop.split('.')[1]] : object.get(prop);
+
+        if (currentVal !== keyframe.value) {
+          setValue(keyframe.name, object, keyframe.value, inst);
         }
       }
     });
-    /*
-        if (play) {
-            p_keyframes.forEach(function(keyframe){
-                inst.getItemById(keyframe.id).set("visible", false);
-                window.setTimeout(function(){
-                    if (!paused) {
-                        inst.getItemById(keyframe.id).set("visible", true);
-                        inst.renderAll();
-                    }
-                }, keyframe.start-time)
-                window.setTimeout(function(){
-                    if (!paused) {
-                        inst.getItemById(keyframe.id).set("visible", false);
-                        inst.renderAll();
-                    }
-                }, keyframe.end-time)
-            })
-        }
-        */
-    objects.forEach(function (object) {
-      if (object.id.indexOf('Group') == -1) {
+
+    // Additional code for handling visibility and animations
+    objects.forEach(object => {
+      if (!object.id.includes('Group')) {
         const object2 = canvas.getItemById(object.id);
-        if (
-          currenttime <
-          p_keyframes.find((x) => x.id == object.id).trimstart +
-          p_keyframes.find((x) => x.id == object.id).start
-        ) {
-          object2.set('visible', false);
-        } else if (
-          currenttime >
-          p_keyframes.find((x) => x.id == object.id).end ||
-          currenttime > duration
-        ) {
-          object2.set('visible', false);
-        } else {
-          object2.set('visible', true);
-        }
-        if (
-          currenttime >=
-          p_keyframes.find((x) => x.id == object.id).trimstart +
-          p_keyframes.find((x) => x.id == object.id).start
-        ) {
-          props.forEach(function (prop) {
-            checkAnyKeyframe(object.id, prop, inst);
-          });
+        const pKeyframe = p_keyframes.find(x => x.id === object.id);
+        const isVisible = currenttime >= pKeyframe.trimstart + pKeyframe.start && currenttime <= pKeyframe.end && currenttime <= duration;
+
+        object2.set('visible', isVisible);
+        inst.renderAll();
+        if (isVisible) {
+          props.forEach(prop => checkAnyKeyframe(object.id, prop, inst));
         }
       }
-      var obj = canvas.getItemById(object.id);
-      if (obj.type == 'lottie') {
+
+      const obj = canvas.getItemById(object.id);
+      if (obj.type === 'lottie') {
         obj.goToSeconds(currenttime);
         inst.renderAll();
       }
     });
+
     inst.renderAll();
 
     if (animatedtext.length > 0) {
-      animatedtext.forEach(function (text) {
+      animatedtext.forEach(text => {
         text.seek(currenttime, canvas);
         inst.renderAll();
       });
     }
 
     playVideos(time);
-    if (play) {
-      playAudio(time);
-    }
+    if (play) playAudio(time);
+
     if (play && !paused) {
-      var animation = {
-        value: 0,
-      };
-      var main_instance = anime({
+      const animation = { value: 0 };
+      const mainInstance = anime({
         targets: animation,
         value: [currenttime, duration],
         duration: duration - currenttime,
         easing: 'linear',
         autoplay: true,
-        update: function () {
+        update: () => {
           if (!paused) {
             currenttime = animation.value;
             if (animatedtext.length > 0) {
-              animatedtext.forEach(function (text) {
+              animatedtext.forEach(text => {
                 text.seek(currenttime, canvas);
                 inst.renderAll();
               });
             }
-            objects.forEach(function (object) {
-              if (object.id.indexOf('Group') == -1) {
+            objects.forEach(object => {
+              if (!object.id.includes('Group')) {
                 const object2 = inst.getItemById(object.id);
-                if (
-                  currenttime <
-                  p_keyframes.find((x) => x.id == object.id)
-                    .trimstart +
-                  p_keyframes.find((x) => x.id == object.id).start
-                ) {
-                  object2.set('visible', false);
-                } else if (
-                  currenttime >
-                  p_keyframes.find((x) => x.id == object.id).end ||
-                  currenttime > duration
-                ) {
-                  object2.set('visible', false);
-                } else {
-                  object2.set('visible', true);
-                }
-                if (
-                  currenttime >=
-                  p_keyframes.find((x) => x.id == object.id)
-                    .trimstart +
-                  p_keyframes.find((x) => x.id == object.id).start
-                ) {
-                  props.forEach(function (prop) {
-                    checkAnyKeyframe(object.id, prop, inst);
-                  });
+                const pKeyframe = p_keyframes.find(x => x.id === object.id);
+                const isVisible = currenttime >= pKeyframe.trimstart + pKeyframe.start && currenttime <= pKeyframe.end && currenttime <= duration;
+
+                object2.set('visible', isVisible);
+                inst.renderAll();
+
+                if (isVisible) {
+                  props.forEach(prop => checkAnyKeyframe(object.id, prop, inst));
                 }
               }
-              var obj = canvas.getItemById(object.id);
-              if (obj.type == 'lottie') {
+
+              const obj = canvas.getItemById(object.id);
+              if (obj.type === 'lottie') {
                 obj.goToSeconds(currenttime);
                 inst.renderAll();
               }
             });
+
             inst.renderAll();
+
             if (!recording) {
               renderTime();
-              $('#seekbar').css({
-                left: currenttime / timelinetime + offset_left,
-              });
+              $('#seekbar').css({ left: currenttime / timelinetime + offset_left });
             }
           } else {
             pause();
@@ -2099,9 +1935,7 @@ async function animate(play, time) {
             anime.remove(animation);
           }
         },
-        complete: function () {
-          pause();
-        },
+        complete: () => { pause(); },
       });
     } else if (paused) {
       currenttime = time;
@@ -3185,6 +3019,7 @@ function renderProp(prop, object) {
 
 
 // Create a layer
+// IMPROVED BY CHATGPT --GEORGE
 function newLayer(object) {
   layer_count++;
   var color;
@@ -3239,7 +3074,7 @@ function newLayer(object) {
     const start = object.get('notnew') ? object.get('starttime') : currenttime;
     const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
 
-    console.log("[newLayer]" + start + " " + end);
+    console.log("[newLayer] start and end" + start + " " + end);
 
     p_keyframes.push({
       start: start,
@@ -3257,6 +3092,7 @@ function newLayer(object) {
   // Set properties for objects that are not audio
   if (!object.get('assetType') || object.get('assetType') != 'audio') {
     props.forEach(function (prop) {
+
       if (['lineHeight', 'charSpacing'].includes(prop) && object.get('type') == 'textbox') {
         if (prop != 'lineHeight') {
           renderProp(prop, object);
@@ -3289,9 +3125,11 @@ function newLayer(object) {
   $(`.layer[data-object='${object.get('id')}']`).addClass('layer-selected');
   document.getElementsByClassName('layer-selected')[0].scrollIntoView();
 
+  // console.log("[newLayer] before animate, object left and top: " + object.get('left') + " " + object.get('top'));
   // Initialize animations and save the state
   objects.find((x) => x.id == object.id).animate = [];
   animate(false, currenttime);
+  // console.log("[newLayer] after animate, object left and top: " + object.get('left') + " " + object.get('top'));
   save();
   checkFilter();
 }
@@ -4331,12 +4169,11 @@ function newTextbox(
     mb: false,
   });
   canvas.add(newtext);
-
+  // Attempt Fix for text top and left not correctly being set to center: move 
+  // setactiveobject to the end of function. --GEORGE
+  // THIS IS NOT FIXING THE ISSUE. DAMN. --GEORGE
   // add this text element as a layer (a layer is a row in the timeline)
   newLayer(newtext);
-
-  // Fix for text top and left not correctly being set to center: move 
-  // setactiveobject to the end of function. --GEORGE
   // canvas.setActiveObject(newtext);
   canvas.bringToFront(newtext);
   newtext.enterEditing();
@@ -4351,12 +4188,13 @@ function newTextbox(
       'top',
       artboard.get('top') + artboard.get('height') / 2
     );
-    console.log("[newTextbox] centering text");
+    console.log("[newTextbox] centering text (this is a correct centering.)");
+    canvas.centerObject(newtext);
     canvas.renderAll();
   }
   // set active here!
   canvas.setActiveObject(newtext);
-  canvas.getActiveObject().set('fontFamily', font);
+  newtext.set('fontFamily', font);
   canvas.renderAll();
 }
 
@@ -5352,6 +5190,7 @@ function dragSeekBar(e) {
     renderTime();
   }
   function released(e) {
+    console.log('[dragSeekBar] released, about to call updatePanelValues');
     $('body').off('mousemove', dragging).off('mouseup', released);
     updateTime(drag, false);
     seeking = false;

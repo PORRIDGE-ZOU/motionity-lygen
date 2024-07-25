@@ -105,6 +105,7 @@ function updatePanel(selection) {
     ) {
       $('#object-specific').append(path_panel);
     } else if (canvas.getActiveObject().get('type') == 'textbox') {
+      console.log('[updatePanel] textbox: ', canvas.getActiveObject());
       $('#object-specific').append(text_panel);
       selectme = document.getElementById('select-letter');
       o_letter_slider = new RangeSlider(selectme, {
@@ -513,6 +514,7 @@ function updatePanelValues() {
       $('#masks').niceSelect('update');
     }
     updateStrokeValues();
+    console.log("[updatePanelValues] object: ", object);
     $('#object-x input').val(
       parseFloat(
         (
@@ -1275,6 +1277,7 @@ function replaceObject(src, object) {
 }
 
 // Drag object from the panel
+// IMPROVED BY CHATGPT --GEORGE
 function dragObject(e) {
   // Prevent right-click drag
   if (e.which == 3) {

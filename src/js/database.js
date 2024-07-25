@@ -754,9 +754,9 @@ function newTextboxWithTime(
     mb: false,
   });
   canvas.add(newtext);
-  console.log("[newTextboxWithTime] starttime: " + starttime + " duration: " + duration + " text: " + text);
+  newtext.set('notnew', true);
+  newtext.set('starttime', starttime);
 
-  // add this text element as a layer
   function newLayerForHere(object) {
     layer_count++;
     var color;
@@ -807,9 +807,13 @@ function newTextboxWithTime(
         mask: 'none',
       });
 
-      // THIS IS HANDLED BY FUNCTION PARAMETERS. --GEORGE
-      const start = starttime;
-      const end = duration;
+      // Handle keyframes for non-video/audio objects
+      const start = object.get('notnew') ? object.get('starttime') : currenttime;
+      // const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
+      const end = object.get('notnew') ? duration : duration - currenttime;
+
+      console.log("[newLayer] start and end time: " + start + " " + end);
+
       p_keyframes.push({
         start: start,
         end: end,
@@ -864,16 +868,15 @@ function newTextboxWithTime(
     save();
     checkFilter();
   }
-  // newLayerForHere(newtext);
-  newtext.set('notnew', true);
-  newtext.set('starttime', starttime);
-  newLayer(newtext);
+  // add this text element as a layer (a layer is a row in the timeline)
+  newLayerForHere(newtext);
 
-
-  canvas.setActiveObject(newtext);
+  // Fix for text top and left not correctly being set to center: move 
+  // setactiveobject to the end of function. --GEORGE
+  // canvas.setActiveObject(newtext);
   canvas.bringToFront(newtext);
-  // newtext.enterEditing();
-  // newtext.selectAll();
+  newtext.enterEditing();
+  newtext.selectAll();
   canvas.renderAll();
   if (center) {
     newtext.set(
@@ -884,11 +887,13 @@ function newTextboxWithTime(
       'top',
       artboard.get('top') + artboard.get('height') / 2
     );
+    console.log("[newTextboxWithTime] centering text");
     canvas.renderAll();
   }
+  // set active here!
+  canvas.setActiveObject(newtext);
   canvas.getActiveObject().set('fontFamily', font);
   canvas.renderAll();
-
 }
 
 
@@ -924,8 +929,8 @@ function lyricsParse(e) {
       duration = lyricsObjects[index + 1] ?
         (lyricsObjects[index + 1].timeInSeconds - line.timeInSeconds) * 1000 :
         5000; // HOW TO SET DEFAULT? --GEORGE
-      var centerX = artboard.get('left') + artboard.get('width') / 2;
-      var centerY = artboard.get('top') + artboard.get('height') / 2;
+
+      console.log("start and duration: " + line.timeInSeconds * 1000 + " " + duration);
       newTextboxWithTime(
         30,
         700,
@@ -933,7 +938,7 @@ function lyricsParse(e) {
         960,
         540,
         200,
-        false,
+        true,
         'Inter',
         line.getTimeInSeconds() * 1000,
         duration
@@ -945,10 +950,8 @@ function lyricsParse(e) {
       //   centerX,
       //   centerY,
       //   200,
-      //   false,
-      //   'Inter',
-      //   line.getTimeInSeconds() * 1000,
-      //   duration
+      //   true,
+      //   'Inter'
       // );
       canvas.renderAll();
     }

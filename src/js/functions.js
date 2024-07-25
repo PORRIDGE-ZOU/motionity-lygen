@@ -4331,8 +4331,10 @@ function newTextbox(
     mb: false,
   });
   canvas.add(newtext);
-  // add this text element as a layer
+
+  // add this text element as a layer (a layer is a row in the timeline)
   newLayer(newtext);
+
   // Fix for text top and left not correctly being set to center: move 
   // setactiveobject to the end of function. --GEORGE
   // canvas.setActiveObject(newtext);

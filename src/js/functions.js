@@ -51,7 +51,13 @@ function updateSelection(e) {
   }
 }
 
-// Object has been modified, automatically add a keyframe
+
+/**
+ * Object has been modified, automatically add a keyframe
+ * @param {fabric.Object} object 
+ * @param {Event} e 
+ * @param {boolean} multi 
+ */
 function autoKeyframe(object, e, multi) {
   if (e.action == 'drag') {
     newKeyframe(
@@ -1283,7 +1289,10 @@ function checkAnyKeyframe(id, prop, inst) {
     const value = objects
       .find((x) => x.id == id)
       .defaults.find((x) => x.name == prop).value;
-    console.log("[checkAnyKeyframe] keyarr2 is 0, object: ", object, " prop: ", prop, " value: ", value, "object prop value: ", object.get(prop));
+
+    if (prop == 'left' || prop == 'top') {
+      // console.log("[checkAnyKeyframe] displaying left and top props, so that you know it's trying to change it to some weird positions.\nobject: ", object, "\nprop: ", prop, "\nobject prop value: ", object.get(prop), "\ntrying to change to value: ", value);
+    }
     // NOTE HERE - I have to just SKIP OVER left and top to work around this issue.--George
     if (prop == 'left' || prop == 'top') {
     } else {
@@ -2796,7 +2805,11 @@ function centerObject(object) {
   save();
 }
 
-// Render a layer
+/**
+ * Render a layer's UI
+ * @param {fabric.Object} object 
+ * @param {boolean} animate 
+ */
 function renderLayer(object, animate = false) {
   $('#nolayers').addClass('yaylayers');
   const color = objects.find((x) => x.id == object.get('id')).color;
@@ -2847,6 +2860,7 @@ function renderLayer(object, animate = false) {
     (p_keyframes.find((x) => x.id == object.get('id')).end -
       p_keyframes.find((x) => x.id == object.get('id')).trimstart) /
     timelinetime;
+  console.log("[renderLayer] object end and start: ", p_keyframes.find((x) => x.id == object.get('id')).end, p_keyframes.find((x) => x.id == object.get('id')).start, "timelinetime: ", timelinetime, "trimstart: ", p_keyframes.find((x) => x.id == object.get('id')).trimstart);
   $('#inner-timeline').prepend(
     "<div class='object-props' id='" +
     object.get('id') +
@@ -3019,8 +3033,11 @@ function renderProp(prop, object) {
 }
 
 
-// Create a layer
-// IMPROVED BY CHATGPT --GEORGE
+/**
+ * Create a Layer (which is a row in the timeline).
+ * AUTOIMPROVED BY CHATGPT -- GEORGE
+ * @param {fabric.Object} object 
+ */
 function newLayer(object) {
   layer_count++;
   var color;
@@ -4120,7 +4137,17 @@ function newAudioLayer(src) {
   });
 }
 
-// Create a textbox
+
+/**
+ * Creates a new fabric.Textbox object and adds it to the canvas.
+ * Triggers when you use the "text" section.
+ * @param {string} text - The content of the text.
+ * @param {number} x - The x-coordinate of the text.
+ * @param {number} y - The y-coordinate of the text.
+ * @param {number} width - The width of the text. (NOT USED)
+ * @param {boolean} center - Whether to center the text on the canvas.
+ * @param {string} font - The font family of the text.
+ */
 function newTextbox(
   fontsize,
   fontweight,

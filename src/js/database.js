@@ -712,8 +712,8 @@ function newTextboxWithTime(
   width,
   center,
   font,
-  starttime,
-  thisDuration
+  startTime,
+  endTime
 ) {
   var newtext = new fabric.Textbox(text, {
     left: x,
@@ -754,6 +754,9 @@ function newTextboxWithTime(
     mb: false,
   });
   canvas.add(newtext);
+  newtext.set('notnew', true);
+  newtext.set('starttime', startTime);
+  newtext.set('endtime', endTime);
 
   function newLayerForHere(object) {
     layer_count++;
@@ -788,7 +791,7 @@ function newTextboxWithTime(
       p_keyframes.push({
         start: currenttime,
         end: end,
-        trimstart: 0,
+        trimstart: currenttime,
         trimend: end,
         object: object,
         id: object.get('id'),
@@ -807,9 +810,10 @@ function newTextboxWithTime(
 
       // Handle keyframes for non-video/audio objects
       const start = object.get('notnew') ? object.get('starttime') : currenttime;
-      const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
+      // const end = object.get('notnew') ? duration - object.get('starttime') : duration - currenttime;
+      const end = object.get('notnew') ? object.get('endtime') : duration;
 
-      console.log("[newLayerForHere] start and end" + start + " " + end);
+      console.log("[newLayerForHere] start and end: " + start + " " + end);
 
       p_keyframes.push({
         start: start,
@@ -919,12 +923,13 @@ function lyricsParse(e) {
 
     lyricsObjects.forEach(function (line, index) {
       // duration should be the next index's time - this time
-      var duration = 0;
-      duration = lyricsObjects[index + 1] ?
-        (lyricsObjects[index + 1].timeInSeconds - line.timeInSeconds) * 1000 :
-        5000; // HOW TO SET DEFAULT? --GEORGE
+      // var duration = 0;
+      // duration = lyricsObjects[index + 1] ?
+      //   (lyricsObjects[index + 1].timeInSeconds - line.timeInSeconds) * 1000 :
+      //   5000; // HOW TO SET DEFAULT? --GEORGE
+      var endTime = lyricsObjects[index + 1] ? lyricsObjects[index + 1].timeInSeconds * 1000 : line.getTimeInSeconds() * 1000 + 5000;
 
-      console.log("start and duration: " + line.timeInSeconds * 1000 + " " + duration);
+      console.log("[lyricsParse] start and endTime: " + line.timeInSeconds * 1000 + " " + endTime);
       newTextboxWithTime(
         30,
         700,
@@ -935,7 +940,7 @@ function lyricsParse(e) {
         true,
         'Inter',
         line.getTimeInSeconds() * 1000,
-        duration
+        endTime
       );
       // newTextbox(
       //   30,

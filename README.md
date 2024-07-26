@@ -5,7 +5,7 @@ Found Problems and TODOs:
 - [🟨] When the size is 2k and you add a new text to the default position, it will shift
   to another position immediately
 - [ ] Deleting an object can sometimes cause problems
-- [✅] Scaling logic is incorrect (fixed, not implemented)
+- [✅] Scaling logic is incorrect
 - [ ] Cannot add animation presets to an existing text
 - [ ] No camera controller
 - [ ] No group alignment

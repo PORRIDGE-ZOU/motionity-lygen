@@ -816,9 +816,9 @@ function newTextboxWithTime(
       console.log("[newLayerForHere] start and end: " + start + " " + end);
 
       p_keyframes.push({
-        start: start,
-        end: end,
-        trimstart: 0,
+        start: 0,
+        end: duration,
+        trimstart: start,
         trimend: end,
         object: object,
         id: object.get('id'),

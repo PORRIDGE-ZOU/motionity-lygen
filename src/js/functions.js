@@ -5231,14 +5231,18 @@ function dragSeekBar(e) {
 }
 $(document).on('mousedown', '#seekbar', dragSeekBar);
 
-// Dragging layer horizontally
+/** Dragging/Trimming a layer horizontally */
 function dragObjectProps(e) {
+  // Prevent right-click drag
   if (e.which == 3) {
     return false;
   }
+
+  // Initialize variables
   var drag = $(this).parent();
   var drag2 = $(this).find('.trim-row');
   var target = e.target;
+  /** The X coordinate of the mouse pointer relative to the entire document when the event occurred */
   var pageX = e.pageX;
   var offset = drag.offset();
   var offset2 = drag2.offset();
@@ -5246,175 +5250,110 @@ function dragObjectProps(e) {
   var initpos = drag2.position().left;
   var opened = false;
   var trim = 'no';
-  // Trim layer to hovered area
+
+  // if metakey + shift key is pressed, we DIRECTLY trim the object to the 
+  // cursor's position, with inferring the trim direction from the cursor's relatvie position.
+  // MetaKey is command on mac --George
   if (e.metaKey) {
     if (e.shiftKey) {
+      // Trim from the left
       if (drag2.position().left + e.pageX >= 0) {
         drag2.offset({
-          left:
-            hovertime / timelinetime -
-            p_keyframes.find((x) => x.id == drag.attr('id'))
-              .trimstart /
-            timelinetime +
-            offset2.left,
+          left: hovertime / timelinetime - p_keyframes.find((x) => x.id == drag.attr('id')).trimstart / timelinetime + offset2.left,
         });
-        const leftval = parseFloat(
-          (drag2.position().left * timelinetime).toFixed(1)
-        );
-        p_keyframes.find((x) => x.id == drag.attr('id')).trimstart =
-          leftval;
+        const leftval = parseFloat((drag2.position().left * timelinetime).toFixed(1));
+        p_keyframes.find((x) => x.id == drag.attr('id')).trimstart = leftval;
         drag2.css({
-          width:
-            (p_keyframes.find((x) => x.id == drag.attr('id'))
-              .trimend -
-              p_keyframes.find((x) => x.id == drag.attr('id'))
-                .trimstart) /
-            timelinetime,
+          width: (p_keyframes.find((x) => x.id == drag.attr('id')).trimend - p_keyframes.find((x) => x.id == drag.attr('id')).trimstart) / timelinetime,
         });
         return false;
       }
     } else {
-      if (
-        hovertime +
-        p_keyframes.find((x) => x.id == drag.attr('id')).start <
-        duration
-      ) {
+      // Trim from the right
+      if (hovertime + p_keyframes.find((x) => x.id == drag.attr('id')).start < duration) {
         drag2.css({
-          width:
-            hovertime / timelinetime -
-            p_keyframes.find((x) => x.id == drag.attr('id'))
-              .trimstart /
-            timelinetime,
+          width: hovertime / timelinetime - p_keyframes.find((x) => x.id == drag.attr('id')).trimstart / timelinetime,
         });
         save();
-        p_keyframes.find((x) => x.id == drag.attr('id')).end =
-          hovertime;
-        p_keyframes.find((x) => x.id == drag.attr('id')).trimend =
-          hovertime;
+        p_keyframes.find((x) => x.id == drag.attr('id')).end = hovertime;
+        p_keyframes.find((x) => x.id == drag.attr('id')).trimend = hovertime;
       }
       return false;
     }
   }
+
+  // Determine if trimming from left or right
   if (pageX - $(this).find('.trim-row').offset().left < 7) {
     trim = 'left';
-  } else if (
-    pageX - $(this).find('.trim-row').offset().left >
-    $(this).find('.trim-row').width() - 7
-  ) {
+  } else if (pageX - $(this).find('.trim-row').offset().left > $(this).find('.trim-row').width() - 7) {
     trim = 'right';
   }
+
+  // Function to handle dragging
   function dragging(e) {
     if (trim == 'no') {
+      // Regular dragging
       var left = offset.left + (e.pageX - pageX);
-      if (
-        left >
-        $('#timearea').offset().left +
-        offset_left -
-        $('#timeline').scrollLeft()
-      ) {
+      if (left > $('#timearea').offset().left + offset_left - $('#timeline').scrollLeft()) {
         drag.offset({ left: left });
-      } else if (
-        left + $('#timeline').scrollLeft() <
-        $('#timearea').offset().left + offset_left
-      ) {
+      } else if (left + $('#timeline').scrollLeft() < $('#timearea').offset().left + offset_left) {
         drag.css({ left: offset_left });
       }
-      p_keyframes.find((x) => x.id == drag.attr('id')).start =
-        parseFloat(
-          (
-            (drag.position().left -
-              offset_left +
-              $('#timeline').scrollLeft()) *
-            timelinetime
-          ).toFixed(1)
-        );
-      p_keyframes.find((x) => x.id == drag.attr('id')).end =
-        parseFloat(
-          (
-            (drag.position().left +
-              drag.width() -
-              offset_left +
-              $('#timeline').scrollLeft()) *
-            timelinetime
-          ).toFixed(1)
-        );
-      if (
-        $(".keyframe-row[data-object='" + drag.attr('id') + "']").is(
-          ':hidden'
-        )
-      ) {
+
+      // Update keyframe start and end times
+      p_keyframes.find((x) => x.id == drag.attr('id')).start = parseFloat(((drag.position().left - offset_left + $('#timeline').scrollLeft()) * timelinetime).toFixed(1));
+      p_keyframes.find((x) => x.id == drag.attr('id')).end = parseFloat(((drag.position().left + drag.width() - offset_left + $('#timeline').scrollLeft()) * timelinetime).toFixed(1));
+
+      // Ensure properties panel is open
+      if ($(".keyframe-row[data-object='" + drag.attr('id') + "']").is(':hidden')) {
         opened = true;
-        $(".layer[data-object='" + drag.attr('id') + "']")
-          .find('.properties')
-          .toggle();
-        $(".layer[data-object='" + drag.attr('id') + "']")
-          .find('.properties')
-          .toggleClass('layeron');
-        $(
-          ".keyframe-row[data-object='" + drag.attr('id') + "']"
-        ).toggle();
+        $(".layer[data-object='" + drag.attr('id') + "']").find('.properties').toggle().toggleClass('layeron');
+        $(".keyframe-row[data-object='" + drag.attr('id') + "']").toggle();
         setTimelineZoom(timelinetime);
       }
+
+      // Update keyframes and animate
       drag.find('.keyframe').each(function () {
         updateKeyframe($(this), false, true);
       });
       animate(false, currenttime);
+
     } else if (trim == 'left') {
+      // Trimming from the left
       if (drag2.position().left + (e.pageX - pageX) >= 0) {
-        drag2.offset({
-          left: offset2.left + (e.pageX - pageX),
-        });
-        drag2.css({
-          width: initwidth - (-initpos + drag2.position().left),
-        });
-        const leftval = parseFloat(
-          (drag2.position().left * timelinetime).toFixed(1)
-        );
-        p_keyframes.find((x) => x.id == drag.attr('id')).trimstart =
-          leftval;
+        drag2.offset({ left: offset2.left + (e.pageX - pageX) });
+        drag2.css({ width: initwidth - (-initpos + drag2.position().left) });
+        const leftval = parseFloat((drag2.position().left * timelinetime).toFixed(1));
+        // console.log("[dragObjectProps] new (trimstart) leftval: ", leftval);
+        p_keyframes.find((x) => x.id == drag.attr('id')).trimstart = leftval;
       }
+
     } else if (trim == 'right') {
+      // Trimming from the right
       if (initwidth + (e.pageX - pageX) < duration / timelinetime) {
-        drag2.css({
-          width: initwidth + (e.pageX - pageX),
-        });
+        drag2.css({ width: initwidth + (e.pageX - pageX) });
       } else {
-        drag2.css({
-          width:
-            duration / timelinetime -
-            drag.position().left -
-            $('#timeline').scrollLeft() +
-            offset_left,
-        });
+        drag2.css({ width: duration / timelinetime - drag.position().left - $('#timeline').scrollLeft() + offset_left });
       }
-      const rightval = parseFloat(
-        (
-          (drag2.position().left + drag2.width()) *
-          timelinetime
-        ).toFixed(1)
-      );
+      const rightval = parseFloat(((drag2.position().left + drag2.width()) * timelinetime).toFixed(1));
       p_keyframes.find((x) => x.id == drag.attr('id')).end = rightval;
-      p_keyframes.find((x) => x.id == drag.attr('id')).trimend =
-        rightval;
+      p_keyframes.find((x) => x.id == drag.attr('id')).trimend = rightval;
     }
   }
+
+  // Function to handle release of drag
   function released(e) {
     $('body').off('mousemove', dragging).off('mouseup', released);
     if (opened) {
-      $(".layer[data-object='" + drag.attr('id') + "']")
-        .find('.properties')
-        .toggle();
-      $(".layer[data-object='" + drag.attr('id') + "']")
-        .find('.properties')
-        .toggleClass('layeron');
-      $(
-        ".keyframe-row[data-object='" + drag.attr('id') + "']"
-      ).toggle();
+      $(".layer[data-object='" + drag.attr('id') + "']").find('.properties').toggle().toggleClass('layeron');
+      $(".keyframe-row[data-object='" + drag.attr('id') + "']").toggle();
       setTimelineZoom(timelinetime);
     }
     animate(false, currenttime);
     save();
   }
+
+  // Attach event listeners for dragging and releasing
   $('body').on('mouseup', released).on('mousemove', dragging);
 }
 $(document).on('mousedown', '.main-row', dragObjectProps);
